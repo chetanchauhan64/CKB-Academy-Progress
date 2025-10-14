@@ -6,7 +6,7 @@
 
 ## Tasks Completed
 
-- Finished 1 Course on CKB Academy:
+- Finished Second Course on CKB Academy:
 
  <table style="width:100%; text-align:center;">
   <tr>
