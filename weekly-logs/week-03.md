@@ -38,11 +38,23 @@
   <tr>
     <td style="width:33.3%; vertical-align:top; text-align:center;">
      <img width="1470" height="923" alt="Screenshot 2025-10-14 at 11 24 32 PM" src="https://github.com/user-attachments/assets/974c82ba-ff0b-4477-99b4-a6e148c7e8e0" /> 
-      <p style="text-align:center;">Connect Wallet Successfully</p>
+      <p style="text-align:center;">Connected my wallet </p>
     </td>
   </tr>
 </table>
 
+<table style="width:100%; text-align:center;">
+  <tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+      <img width="1470" height="956" alt="Screenshot 2025-10-14 at 10 29 51 PM" src="https://github.com/user-attachments/assets/e8c85038-6fb9-46ec-baab-d5b1c08a593f" />
+      <p style="text-align:center;">CKB Address on Testnet</p>
+    </td>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+      <img src="../assets/transferred-90ckb.png" alt="Transferred 90 CKB" width="100%">
+      <p style="text-align:center;">Transferred 90 CKB</p>
+    </td>
+  </tr>
+</table>
 
 
 
