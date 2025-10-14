@@ -50,11 +50,46 @@
       <p style="text-align:center;">CKB Address on Testnet</p>
     </td>
     <td style="width:50%; vertical-align:top; text-align:center;">
-      <img src="../assets/transferred-90ckb.png" alt="Transferred 90 CKB" width="100%">
+     <img width="1813" height="1031" alt="PhotoshopExtension_Image (6)" src="https://github.com/user-attachments/assets/a0a0d2c3-59e3-4b2a-b88e-c0274ae7384e" /> 
       <p style="text-align:center;">Transferred 90 CKB</p>
     </td>
   </tr>
 </table>
+
+## Example transaction templates (used in the playground)
+
+Here’s the basic raw transaction template I used / experimented with:
+
+```json
+{
+  "version": "0x0",
+  "headerDeps": [],
+  "cellDeps": [
+    {
+      "outPoint": {
+        "txHash": "0xec18bf0d857c981c3d1f4e17999b9b90c484b303378e94de1a57b0872f5d4602",
+        "index": "0x0"
+      },
+      "depType": "code"
+    },
+    {
+      "outPoint": {
+        "txHash": "0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37",
+        "index": "0x0"
+      },
+      "depType": "depGroup"
+  }
+  ],
+  "inputs": [],
+  "outputs": [],
+  "outputsData": [
+    "0x"
+  ],
+  "witnesses": [
+    "0x"
+  ]
+}
+
 
 
 
