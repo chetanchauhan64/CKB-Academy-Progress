@@ -17,5 +17,22 @@
   </tr>
 </table>
 
+• Covered these tech-terms by courses & docs:
+• CKB Transaction structure: inputs, outputs, cellDeps, witnesses
+• Learnt basic transaction flow on CKB (creating, destroying, managing cells).
+
+## What I did (practical steps)
+
+- Connected my wallet to the **CKB testnet** playground and confirmed the testnet address.
+- Checked the **Live Cells** assigned to my wallet (10 cells, each 100 CKB in the playground).
+- Inspected recent **testnet blocks** and transactions to see how transactions appear on-chain.
+- Manually built a transfer transaction JSON:
+  - Selected input live cells (each input points to a previous `tx_hash` + `index`).
+  - Created outputs (new cells) and set capacities / lock scripts.
+  - Added `cell_deps` (SECP256K1_BLAKE160 + OMNILOCK) as required by the playground.
+- Generated the transaction hash locally, then created the witness (signature) with the connected wallet, serialized witnessArgs and inserted it into `witnesses`.
+- Sent the signed transaction to CKB testnet and checked the returned `tx_hash` / status.
+
+## Related Snapshots (for notes)  
 
 
