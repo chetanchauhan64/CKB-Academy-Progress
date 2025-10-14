@@ -34,5 +34,24 @@
 - Sent the signed transaction to CKB testnet and checked the returned `tx_hash` / status.
 
 ## Related Snapshots (for notes)  
+<table style="width:100%; text-align:center;">
+  <tr>
+    <td style="width:33.3%; vertical-align:top; text-align:center;">
+     <img width="1470" height="923" alt="Screenshot 2025-10-14 at 11 24 32 PM" src="https://github.com/user-attachments/assets/974c82ba-ff0b-4477-99b4-a6e148c7e8e0" /> 
+      <p style="text-align:center;">Connect Wallet Successfully</p>
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
 
 
