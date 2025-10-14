@@ -17,7 +17,7 @@
   </tr>
 </table>
 
-• Covered these tech-terms by courses & docs:
+• Covered these tech-terms by course & docs:
 
 • CKB Transaction structure: inputs, outputs, cellDeps, witnesses
 
