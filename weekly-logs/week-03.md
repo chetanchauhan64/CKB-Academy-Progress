@@ -18,7 +18,9 @@
 </table>
 
 • Covered these tech-terms by courses & docs:
+
 • CKB Transaction structure: inputs, outputs, cellDeps, witnesses
+
 • Learnt basic transaction flow on CKB (creating, destroying, managing cells).
 
 ## What I did (practical steps)
