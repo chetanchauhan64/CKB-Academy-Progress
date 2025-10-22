@@ -15,6 +15,7 @@ let mut age = 21;    // Mutable variable
 age += 1;
 println!("{} is now {} years old.", name, age);
 ```
+---
 
 ### • Explored Data Types
 
@@ -28,9 +29,11 @@ let letter: char = 'R';
 let tup: (i32, f64, char) = (42, 6.28, 'Z');
 println!("Tuple values: {}, {}, {}", tup.0, tup.1, tup.2);
 ```
+---
+
 ### • Understood Functions & Return Values
 
-Learned how functions return values without an explicit `return` —  
+ Learned how functions return values without an explicit `return` —  
 the last expression becomes the return value automatically.
 
 ```rust 
@@ -42,6 +45,8 @@ fn main() {
     println!("Sum: {}", add(5, 10)); 
 }
 ```
+---
+
 ### • Studied Ownership Rules
 
 Understood how Rust ensures **memory safety** by transferring ownership.
@@ -54,6 +59,8 @@ fn main() {
     println!("{}", s2);
 }
 ```
+---
+
 ### • Practiced Borrowing & References
 
 Used `&` and `&mut` to **borrow data** without taking ownership.
@@ -74,6 +81,8 @@ fn modify_text(t: &mut String) {
     println!("Modified: {}", t);
 }
 ```
+---
+
 ### • Explored Scope & Lifetimes
 
 Observed how variables are **automatically dropped** when they go out of scope.
@@ -84,6 +93,7 @@ Observed how variables are **automatically dropped** when they go out of scope.
     println!("{}", msg);
 } // msg is dropped here automatically
 ```
+---
 
 ## • Continued Learning
 
