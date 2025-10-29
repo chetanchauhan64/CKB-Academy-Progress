@@ -127,6 +127,78 @@ n</a></p>
   </tr>
 </table>
 
+## • View and Transfer a CKB Balance
+
+### What I Learned
+1. CKB uses a **Cell Model** (UTXO-like) where each cell stores balance (capacity) and data.  
+2. Balance transfer = consuming sender’s live cells ➜ producing receiver’s new cells.  
+3. Used **CCC SDK** to generate accounts, check balance, and transfer CKB.  
+4. 1 CKB = 10⁸ Shannons (like Bitcoin’s satoshi).  
+5. Built a simple dApp to transfer balance using OffCKB Devnet.
+
+---
+
+### • Core Code Used
+
+#### Generate Account
+```rust
+export const generateAccountFromPrivateKey = async (
+  privKey: string
+): Promise<Account> => {
+  const signer = new ccc.SignerCkbPrivateKey(cccClient, privKey);
+  const lock = await signer.getAddressObjSecp256k1();
+  return {
+    lockScript: lock.script,
+    address: lock.toString(),
+    pubKey: signer.publicKey,
+  };
+};
+```
+ **Check Balance**
+ ```rust
+ export async function capacityOf(address: string): Promise<bigint> {
+  const addr = await ccc.Address.fromString(address, cccClient);
+  let balance = await cccClient.getBalance([addr.script]);
+  return balance;
+}
+ ```
+**Transfer CKB**
+ ```rust
+export async function transfer(
+  toAddress: string,
+  amountInCKB: string,
+  signerPrivateKey: string
+): Promise<string> {
+  const signer = new ccc.SignerCkbPrivateKey(cccClient, signerPrivateKey);
+  const { script: toLock } = await ccc.Address.fromString(toAddress, cccClient);
+
+  const tx = ccc.Transaction.from({
+    outputs: [{ lock: toLock }],
+    outputsData: [],
+  });
+
+  tx.outputs.forEach((output, i) => {
+    output.capacity = ccc.fixedPointFrom(amountInCKB);
+  });
+
+  await tx.completeInputsByCapacity(signer);
+  await tx.completeFeeBy(signer, 1000);
+
+  const txHash = await signer.sendTransaction(tx);
+  console.log(
+    `✅ Transaction sent! View: https://pudge.explorer.nervos.org/transaction/${txHash}`
+  );
+
+  return txHash;
+}
+ ```
+<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+<img width="1470" height="923" alt="Screenshot 2025-10-30 at 4 30 35 AM" src="https://github.com/user-attachments/assets/83811cf1-6cae-401b-a1a6-b09dd4b8fe16" />
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•View and Transfer a CKB Balance</a></p>
+    </td>
+  </tr>
+</table>
 ---
 
 ### • Spore NFTs – Strengths and Use Cases
