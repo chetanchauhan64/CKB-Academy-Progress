@@ -52,6 +52,8 @@ n</a></p>
 - Event tickets (POAPs)  
 - Tokenization of real-world assets  
 
+---
+
 ![Topic 3]
 <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
@@ -61,6 +63,8 @@ n</a></p>
     </td>
   </tr>
 </table>
+
+---
 
 ### • Spore NFTs – Strengths and Use Cases
 
@@ -74,6 +78,8 @@ n</a></p>
 - High-value artwork and collectibles  
 - Pixel art or low-data artwork  
 - Tokenized real estate, stocks, or loans  
+
+---
 
 ![Topic 4]
 <tr>
@@ -111,11 +117,31 @@ n</a></p>
 - **CoTA** → Best for *low-cost, scalable NFTs*.  
 - **Spore** → Best for *NFTs requiring full on-chain permanence*.  
 
-![Topic 5](./screenshots/topic5.png)
+![Topic 5]
+<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+ <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 21 08 AM" src="https://github.com/user-attachments/assets/c3ceb397-226f-4cda-bfc3-38ad93abbd3e" />
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">5.Comparing CoTA and Spore NFT Standards
+n</a></p>
+    </td>
+  </tr>
+</table>
+
+---
+## 6. Next Steps – Resources
+![Course Completion]
+<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+<img width="1582" height="952" alt="Screenshot 2025-10-30 at 2 43 03 AM" src="https://github.com/user-attachments/assets/be0ae850-542f-478a-bafb-806dbb5e1a08" />
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">5.Comparing CoTA and Spore NFT Standards
+n</a></p>
+    </td>
+  </tr>
+</table>
 
 ---
 
-### • Next Steps – Resources
+### • Resources
 
 **CoTA Resources:**  
 - [CoTA Website](https://cota.io) – Protocol documentation & examples  
@@ -129,8 +155,6 @@ n</a></p>
 - [Nervos Discord](https://discord.gg/nervos)  
 - [Nervos Talk Forums](https://talk.nervos.org)  
 
-![Topic 6](./screenshots/topic6.png)
-
 ---
 
 ### • References
@@ -142,5 +166,4 @@ n</a></p>
 
 
 
-<img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 06 19 AM" src="https://github.com/user-attachments/assets/81db1230-e8e3-44f2-a4dc-94dca6df8633" />
 
