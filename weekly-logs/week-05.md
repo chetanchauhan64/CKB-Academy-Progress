@@ -24,7 +24,16 @@
 - **CoTA (Compact Token Aggregator)**: Off-chain data verification via **SMT proofs**, extremely low-cost.  
 - **Spore**: Fully on-chain NFTs with **strong permanence** and decentralization.
 
-![Topic 2](./screenshots/topic2.png)
+![Topic 2] 
+<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+   <img width="1582" height="952" alt="Screenshot 2025-10-30 at 2 52 00 AM" src="https://github.com/user-attachments/assets/bfa7a59e-ad17-4aef-ab17-2a8d946b783d" />
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">2. Exploring CKB’s Dual-Layer NFT Ecosystem
+n</a></p>
+    </td>
+  </tr>
+</table>
+
 
 ---
 
@@ -43,9 +52,14 @@
 - Event tickets (POAPs)  
 - Tokenization of real-world assets  
 
-![Topic 3](./screenshots/topic3.png)
-
----
+![Topic 3]<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+  <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 08 23 AM" src="https://github.com/user-attachments/assets/8218354f-ff58-456c-b55b-628c7e787e12" />
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">3. CoTA NFTs: Strengths and Practical Applications
+n</a></p>
+    </td>
+  </tr>
+</table>
 
 ### • Spore NFTs – Strengths and Use Cases
 
@@ -115,9 +129,6 @@
 - [CoTA SDK Documentation](https://github.com/nervina-labs/cota-sdk-js)  
 - [Spore Official Website](https://spore.pro)  
 - [Spore SDK Documentation](https://github.com/nervosnetwork/spore-sdk)  
-
-
-
 
 
 
