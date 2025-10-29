@@ -52,7 +52,8 @@ n</a></p>
 - Event tickets (POAPs)  
 - Tokenization of real-world assets  
 
-![Topic 3]<tr>
+![Topic 3]
+<tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
   <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 08 23 AM" src="https://github.com/user-attachments/assets/8218354f-ff58-456c-b55b-628c7e787e12" />
       <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">3. CoTA NFTs: Strengths and Practical Applications
@@ -74,7 +75,15 @@ n</a></p>
 - Pixel art or low-data artwork  
 - Tokenized real estate, stocks, or loans  
 
-![Topic 4](./screenshots/topic4.png)
+![Topic 4]
+<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+ <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 06 19 AM" src="https://github.com/user-attachments/assets/81db1230-e8e3-44f2-a4dc-94dca6df8633" />
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">4.Spore NFTs: Fully On-Chain Storage and Use Cases
+n</a></p>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -133,5 +142,5 @@ n</a></p>
 
 
 
-
+<img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 06 19 AM" src="https://github.com/user-attachments/assets/81db1230-e8e3-44f2-a4dc-94dca6df8633" />
 
