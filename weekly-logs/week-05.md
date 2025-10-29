@@ -25,6 +25,55 @@
     </td>
   </tr>
 </table>
+
+### • CKB-VM Example – Token Initialization and Transfer
+```rust
+#include <stdio.h>
+#include <string.h>
+
+// Define a simple token structure
+struct Token {
+    char name[20];
+    int totalSupply;
+    int balance;
+};
+
+// Initialize a token
+void initToken(struct Token *token, const char *name, int supply) {
+    strcpy(token->name, name);
+    token->totalSupply = supply;
+    token->balance = supply;
+    printf("Token '%s' initialized with total supply: %d\n", name, supply);
+}
+
+// Transfer tokens between users
+void transfer(struct Token *token, int *fromBalance, int *toBalance, int amount) {
+    if (*fromBalance >= amount) {
+        *fromBalance -= amount;
+        *toBalance += amount;
+        printf("Transfer successful! %d tokens transferred.\n", amount);
+    } else {
+        printf("Transfer failed: Insufficient balance.\n");
+    }
+}
+
+int main() {
+    struct Token myToken;
+    int aliceBalance = 1000;
+    int bobBalance = 200;
+
+    initToken(&myToken, "NEON", 5000);
+
+    printf("Initial Balances:\nAlice: %d\nBob: %d\n\n", aliceBalance, bobBalance);
+
+    transfer(&myToken, &aliceBalance, &bobBalance, 300);
+
+    printf("\nUpdated Balances:\nAlice: %d\nBob: %d\n", aliceBalance, bobBalance);
+    return 0;
+}
+```
+
+
 ---
 
 ### • NFT Standards Overview
