@@ -72,13 +72,20 @@ int main() {
     return 0;
 }
 ```
+<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•[Exploring CKB’s Dual-Layer NFT Ecosystem](https://nervos.gitbook.io/developer-training-course/)
+n</a></p>
+    </td>
+  </tr>
+</table>
 
 
 ---
 
 ### • NFT Standards Overview
 - **CoTA (Compact Token Aggregator)**: Off-chain data verification via **SMT proofs**, extremely low-cost.  
-- **Spore**: Fully on-chain NFTs with **strong permanence** and decentralization.
+- **Spore**: Fully on-chain NFTs with **strong permanence** and decentralization
 
 ![Topic 2] 
 <tr>
