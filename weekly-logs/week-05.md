@@ -186,7 +186,7 @@ export async function transfer(
 
   const txHash = await signer.sendTransaction(tx);
   console.log(
-    `✅ Transaction sent! View: https://pudge.explorer.nervos.org/transaction/${txHash}`
+    `Transaction sent! View: https://pudge.explorer.nervos.org/transaction/${txHash}`
   );
 
   return txHash;
