@@ -17,7 +17,14 @@
     </td>
   </tr>
 </table>
-
+ <tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+    <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 45 57 AM" src="https://github.com/user-attachments/assets/19ec2ec8-c607-48d2-9900-9d2db5cb2bfa" />
+      <p style="text-align:center;">1. <a href="https://academy.ckb.dev/courses/basic-operation">Understanding Key Terms – The CKB Glossary
+</a></p>
+    </td>
+  </tr>
+</table>
 ---
 
 ### • NFT Standards Overview
@@ -164,6 +171,7 @@ n</a></p>
 - [Spore SDK Documentation](https://github.com/nervosnetwork/spore-sdk)  
 
 
+<img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 45 57 AM" src="https://github.com/user-attachments/assets/19ec2ec8-c607-48d2-9900-9d2db5cb2bfa" />
 
 
 
