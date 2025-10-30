@@ -20,7 +20,7 @@
  <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
     <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 45 57 AM" src="https://github.com/user-attachments/assets/19ec2ec8-c607-48d2-9900-9d2db5cb2bfa" />
-      <p style="text-align:center;">1. <a href="https://academy.ckb.dev/courses/basic-operation">Understanding Key Terms – The CKB Glossary
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•Understanding Key Terms – The CKB Glossary
 </a></p>
     </td>
   </tr>
@@ -74,8 +74,7 @@ int main() {
 ```
 <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
-      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•[Exploring CKB’s Dual-Layer NFT Ecosystem](https://nervos.gitbook.io/developer-training-course/)
-n</a></p>
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•[Exploring CKB’s Dual-Layer NFT Ecosystem](https://nervos.gitbook.io/developer-training-course/)</a></p>
     </td>
   </tr>
 </table>
@@ -91,8 +90,7 @@ n</a></p>
 <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
    <img width="1582" height="952" alt="Screenshot 2025-10-30 at 2 52 00 AM" src="https://github.com/user-attachments/assets/bfa7a59e-ad17-4aef-ab17-2a8d946b783d" />
-      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">2. Exploring CKB’s Dual-Layer NFT Ecosystem
-n</a></p>
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•Exploring CKB’s Dual-Layer NFT Ecosystem</a></p>
     </td>
   </tr>
 </table>
@@ -121,8 +119,7 @@ n</a></p>
 <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
   <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 08 23 AM" src="https://github.com/user-attachments/assets/8218354f-ff58-456c-b55b-628c7e787e12" />
-      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">3. CoTA NFTs: Strengths and Practical Applications
-n</a></p>
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•CoTA NFTs: Strengths and Practical Applications</a></p>
     </td>
   </tr>
 </table>
@@ -220,8 +217,7 @@ export async function transfer(
 <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
  <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 06 19 AM" src="https://github.com/user-attachments/assets/81db1230-e8e3-44f2-a4dc-94dca6df8633" />
-      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">4.Spore NFTs: Fully On-Chain Storage and Use Cases
-n</a></p>
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•Spore NFTs: Fully On-Chain Storage and Use Cases</a></p>
     </td>
   </tr>
 </table>
@@ -256,8 +252,7 @@ n</a></p>
 <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
  <img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 21 08 AM" src="https://github.com/user-attachments/assets/c3ceb397-226f-4cda-bfc3-38ad93abbd3e" />
-      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">5.Comparing CoTA and Spore NFT Standards
-n</a></p>
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•Comparing CoTA and Spore NFT Standards</a></p>
     </td>
   </tr>
 </table>
@@ -268,17 +263,80 @@ n</a></p>
 <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
 <img width="1582" height="952" alt="Screenshot 2025-10-30 at 2 43 03 AM" src="https://github.com/user-attachments/assets/be0ae850-542f-478a-bafb-806dbb5e1a08" />
-      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">5.Comparing CoTA and Spore NFT Standards
-n</a></p>
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">•Comparing CoTA and Spore NFT Standards</a></p>
     </td>
   </tr>
 </table>
 
+### • CoTA Protocol Overview
+
+CoTA (Compact Token Aggregator) is a Layer-1.5 protocol on Nervos CKB for managing fungible and non-fungible tokens efficiently.  
+It uses a Sparse Merkle Tree (SMT) to manage massive token and data records with just 32 bytes of on-chain space, enabling scalable and compact token management.
+
+```rust 
+# CoTA Cell Data Structure
+data:
+    version: byte
+    smt_root: byte32
+type:
+    code_hash: cota_type
+    args: lockscript_hash[0..20]  # must match self.lockscript
+lock:
+    --
+```
+• The CoTA Cell stores two key elements:
+
+- SMT Root → represents all account data (balances, NFTs, etc.)
+
+- Type Script → defines validation logic and ties the cell to the owner’s lockscript
+<tr>
+    <td style="width:50%; vertical-align:top; text-align:center;">
+<img width="1470" height="923" alt="Screenshot 2025-10-30 at 5 16 21 AM" src="https://github.com/user-attachments/assets/2ee8d148-847b-4983-8428-8a5fbed767f4" />
+      <p style="text-align:center;"> <a href="https://academy.ckb.dev/courses/basic-operation">• CoTA Protocol Overview</a></p>
+    </td>
+  </tr>
+</table>
+# Two-Step Operation Design Pattern
+
+1. Sender deducts tokens and stores proof in their CoTA cell.
+2. Receiver restores tokens based on the proof in their own CoTA cell.
+
+-This design avoids “anyone-can-pay” locks and improves composability and user security.
+
+# Global Registry
+
+- Ensures only one CoTA cell exists per address.
+- Prevents double-claim and duplicate token issues.
+
+# Global Registry Overview
+
+The Global Registry in CoTA ensures **uniqueness** of every CoTA Cell on the Nervos CKB network.  
+Each address can have **only one CoTA Cell**, preventing double claims and maintaining secure token tracking.
+
+```rust
+# Why Global Registry is Needed
+- Prevents multiple CoTA Cells with same lockscript hash.
+- Avoids double-claim attacks.
+- Guarantees token data integrity.
+```
+```rust
+// Example: CoTA Cell Registration Logic (simplified)
+import { ccc } from "@nervina-labs/ccc-sdk";
+
+async function registerCoTACell(ownerLockHash: string) {
+  const registryCell = {
+    lock: { code_hash: "coTA_registry_lock", args: ownerLockHash },
+    type: { code_hash: "coTA_type", args: "0x00" },
+    data: "0x", // Initial SMT root
+  };
+  console.log(" CoTA Cell registered for:", ownerLockHash);
+  return registryCell;
+}
+```
 ---
 
 ### • Resources
-
-**CoTA Resources:**  
+**CoTA Resources:**
 - [CoTA Website](https://cota.io) – Protocol documentation & examples  
 - [CoTA SDK](https://github.com/nervina-labs/cota-sdk-js) – JavaScript SDK  
 
@@ -299,7 +357,8 @@ n</a></p>
 - [Spore SDK Documentation](https://github.com/nervosnetwork/spore-sdk)  
 
 
-<img width="1470" height="923" alt="Screenshot 2025-10-30 at 3 45 57 AM" src="https://github.com/user-attachments/assets/19ec2ec8-c607-48d2-9900-9d2db5cb2bfa" />
+
+
 
 
 
