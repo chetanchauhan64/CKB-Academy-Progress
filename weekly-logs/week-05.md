@@ -27,7 +27,7 @@
 </table>
 
 ### • CKB-VM Example – Token Initialization and Transfer
-```rust
+```ts
 #include <stdio.h>
 #include <string.h>
 
@@ -138,7 +138,7 @@ int main() {
 ### • Core Code Used
 
 #### Generate Account
-```rust
+```ts
 export const generateAccountFromPrivateKey = async (
   privKey: string
 ): Promise<Account> => {
@@ -152,7 +152,7 @@ export const generateAccountFromPrivateKey = async (
 };
 ```
  **Check Balance**
- ```rust
+ ```ts
  export async function capacityOf(address: string): Promise<bigint> {
   const addr = await ccc.Address.fromString(address, cccClient);
   let balance = await cccClient.getBalance([addr.script]);
@@ -160,7 +160,7 @@ export const generateAccountFromPrivateKey = async (
 }
  ```
 **Transfer CKB**
- ```rust
+ ```ts
 export async function transfer(
   toAddress: string,
   amountInCKB: string,
@@ -273,7 +273,7 @@ export async function transfer(
 CoTA (Compact Token Aggregator) is a Layer-1.5 protocol on Nervos CKB for managing fungible and non-fungible tokens efficiently.  
 It uses a Sparse Merkle Tree (SMT) to manage massive token and data records with just 32 bytes of on-chain space, enabling scalable and compact token management.
 
-```rust 
+```ts
 # CoTA Cell Data Structure
 data:
     version: byte
@@ -313,13 +313,13 @@ lock:
 The Global Registry in CoTA ensures **uniqueness** of every CoTA Cell on the Nervos CKB network.  
 Each address can have **only one CoTA Cell**, preventing double claims and maintaining secure token tracking.
 
-```rust
+```ts
 # Why Global Registry is Needed
 - Prevents multiple CoTA Cells with same lockscript hash.
 - Avoids double-claim attacks.
 - Guarantees token data integrity.
 ```
-```rust
+```ts
 // Example: CoTA Cell Registration Logic (simplified)
 import { ccc } from "@nervina-labs/ccc-sdk";
 
