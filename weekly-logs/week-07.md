@@ -59,10 +59,10 @@ capsule test
 
 ### References
 
-- [Accessing Cell Data – CKB Academy](https://academy.ckb.dev/courses/developer-training-course/lessons/accessing-cell-data)
-- [Script Groups – CKB Academy](https://academy.ckb.dev/courses/developer-training-course/lessons/script-groups)
-- [Using Script Args – CKB Academy](https://academy.ckb.dev/courses/developer-training-course/lessons/using-script-args)
-- [Managing Script State – CKB Academy](https://academy.ckb.dev/courses/developer-training-course/lessons/managing-script-state)
+- [Accessing Cell Data – CKB Academy](https://nervos.gitbook.io/developer-training-course/scripting-basics/accessing-cell-data)
+- [Script Groups – CKB Academy](https://nervos.gitbook.io/developer-training-course/scripting-basics/script-groups)
+- [Using Script Args – CKB Academy](https://nervos.gitbook.io/developer-training-course/scripting-basics/using-script-args)
+- [Managing Script State – CKB Academy](https://nervos.gitbook.io/developer-training-course/scripting-basics/managing-script-state)
 - [SUDT Token Standard (Rust Implementation)](https://github.com/nervosnetwork/ckb-miscellaneous-scripts)
 
 
