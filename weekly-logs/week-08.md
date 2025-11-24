@@ -58,16 +58,14 @@ Completed two core Nervos CKB dApp tutorials from the official documentation:
 <table style="width:100%; text-align:center;">
 <tr>
 <td style="width:33.3%; vertical-align:top; text-align:center;">
-<img src="../assets/store-data-in-a-cell-tutorial-dapp-local-setup.png" alt="Store Data on Cell - Local Setup" width="100%">
+<img width="1470" height="956" alt="Screenshot 2025-11-25 at 1 45 02 AM" src="https://github.com/user-attachments/assets/e6489eb9-8552-4909-b102-e4110cc05de6" />
 <p style="text-align:center;">1. <a href="https://docs.nervos.org/docs/dapp/store-data-on-cell">Store Data on Cell - Local Setup</a></p>
 </td>
 <td style="width:33.3%; vertical-align:top; text-align:center;">
-<img src="../assets/store-data-on-cell-tutorial-dapp.png" alt="Stored Data on Cell" width="100%">
+<img width="1470" height="956" alt="Screenshot 2025-11-25 at 1 46 56 AM" src="https://github.com/user-attachments/assets/221db37d-76f9-4a0d-97a2-1ccf9241045f" />
 <p style="text-align:center;">2. Stored Message on Cell</p>
 </td>
-<td style="width:33.3%; vertical-align:top; text-align:center;">
-<img src="../assets/read-data-stored-on-a-cell.png" alt="Read Data Stored on a Cell" width="100%">
-<p style="text-align:center;">3. Read Data & <a href="https://testnet.explorer.nervos.org/">Explorer Link</a></p>
+
 </td>
 </tr>
 </table>
@@ -84,7 +82,7 @@ Completed two core Nervos CKB dApp tutorials from the official documentation:
 
 
 
-<img width="1470" height="956" alt="Screenshot 2025-11-25 at 2 35 21 AM" src="https://github.com/user-attachments/assets/1c76ca9f-4e34-4f67-857d-fb98e789c73a" />
+
 
 
 
