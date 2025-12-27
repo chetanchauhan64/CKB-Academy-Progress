@@ -1,6 +1,6 @@
 ## Week 11
 
-**Date:** 2nd – 8th December, 2025
+**Date:** 12th – 19th December, 2025
 
 ### Tasks Completed
 - Finalized the project idea: a decentralized WordPress-style blog publishing platform using CKBFS.
