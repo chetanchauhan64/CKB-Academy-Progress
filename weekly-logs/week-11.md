@@ -4,35 +4,26 @@
 
 ### Tasks Completed
 
-### Project Setup – Decentralized Blog Platform Using CKBFS
+### CKB Project Setup – Decentralized Blog Platform Using CKBFS
 
-Started working on my main project: a decentralized WordPress-style blog publishing platform using CKBFS for storage.
+Started working on the main project: a decentralized WordPress-style blog publishing platform using CKBFS.
 
 #### Progress & Implementation
 
-- Created a new project directory at the root of the CKB Academy repository.
-- Set up the development workspace using VS Code.
-- Structured the project for scalable development by creating core folders:
+- Created a new project directory `ckbfs-decentralized-blog` at the root of the CKB Academy repository.
+- Opened the project workspace in VS Code.
+- Set up the base project structure for development.
 
-  - `contracts` – smart contract logic
-  - `frontend` – user interface
-  - `scripts` – helper scripts
-  - `assets` – static files and resources
+```bash
+mkdir contracts frontend scripts assets
+```
+- Verified repository structure and environment readiness.
 
-- Initialized the project configuration and verified the setup using the VS Code terminal.
-- Prepared the environment for upcoming CKBFS integration and on-chain/off-chain data handling.
+### Key Learnings
 
-#### Key Learnings
-
-- How to properly organize a main project inside the CKB Builder Academy repository.
-- Best practices for initial project setup before starting core development.
-
-- Related screenshots:
-  - Project folder created at repository root
-  - Folder structure (`contracts`, `frontend`, `scripts`, `assets`)
-  - Terminal commands used during setup
+- Understood how to structure a main project inside the CKB Builder Academy repository.
+- Learned the importance of initial project setup before core development.
 
 ### References
 
-- CKB Builder Academy Handbook  
-- CKBFS Documentation
+-  
