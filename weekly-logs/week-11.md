@@ -1,29 +1,36 @@
 ## Week 11
 
-**Date:** 2nd – 8th Dec, 2025
+**Date:** 2nd – 8th December, 2025
 
 ### Tasks Completed
+- Finalized the project idea: a decentralized WordPress-style blog publishing platform using CKBFS.
+- Opened the CKB Builder Academy repository in VS Code and created a new project directory at the repository root:
+  
+  ```bash
+  mkdir ckbfs-decentralized-blog
+  cd ckbfs-decentralized-blog
 
-### CKB Project Setup – Decentralized Blog Platform Using CKBFS
+ - Verified the development environment inside VS Code:
+   
+ ```bash
+node -v
+npm -v
+ ```
+- Initialized the project configuration using Node.js:
 
-Started working on the main project: a decentralized WordPress-style blog publishing platform using CKBFS.
-
-#### Progress & Implementation
-
-- Created a new project directory `ckbfs-decentralized-blog` at the root of the CKB Academy repository.
-- Opened the project workspace in VS Code.
-- Set up the base project structure for development.
-
-```bash
-mkdir contracts frontend scripts assets
+ ```bash
+npm init -y
 ```
-- Verified repository structure and environment readiness.
+- Created the base project structure required for development:
 
-### Key Learnings
+ ```bash
+mkdir contracts frontend scripts assets
+ ```
+- Verified the folder structure and ensured the project directory is cleanly separated from existing tutorial dApps.
 
-- Understood how to structure a main project inside the CKB Builder Academy repository.
-- Learned the importance of initial project setup before core development.
+### Next Steps
 
-### References
-
--  
+- Upload a sample blog post to CKBFS and generate a content identifier (CID).
+- Implement basic content retrieval from CKBFS using the generated CID.
+- Define metadata structure for blog posts (title, author, CID, timestamp).
+- Start documenting the storage and retrieval flow for the decentralized blog platform.
