@@ -1,4 +1,4 @@
-# 🚀 CKBFS Decentralized Blog Platform
+# CKBFS Decentralized Blog Platform
 
 A production-ready, internship-level decentralized blog publishing platform built using **Nervos CKB** and **CKBFS (CKB File System)**.
 
@@ -6,7 +6,7 @@ A production-ready, internship-level decentralized blog publishing platform buil
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
 - Overview  
 - Why CKBFS?  
@@ -20,7 +20,7 @@ A production-ready, internship-level decentralized blog publishing platform buil
 
 ---
 
-## 🌟 Overview
+## Overview
 
 The **CKBFS Decentralized Blog Platform** is a Web3 blogging application where blog posts, metadata, and media are designed to be stored immutably on **CKBFS**, leveraging the **Nervos CKB Cell Model**.
 
@@ -31,18 +31,7 @@ The goal of this project is to demonstrate:
 
 ---
 
-## ✅ Key Features
-
-- ✅ **Decentralized Storage** – Blog content stored on CKBFS  
-- ✅ **Immutable Content** – Posts cannot be modified or censored  
-- ✅ **Content Addressing** – Each post identified by a cryptographic CID  
-- ✅ **Modern UI** – Built with React, Vite, and Tailwind CSS  
-- ✅ **Scalable Architecture** – Clear separation of frontend, content, and scripts  
-- ✅ **Production-Ready Structure** – Clean code and documentation  
-
----
-
-## 🤔 Why CKBFS?
+## Why CKBFS?
 
 ### Problems with Traditional Blogging Platforms
 
@@ -62,7 +51,7 @@ The goal of this project is to demonstrate:
 
 ---
 
-## 🧱 Architecture
+## Architecture
 
 The platform is divided into three major layers:
 
@@ -81,7 +70,7 @@ For more details, see [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **React 18**
