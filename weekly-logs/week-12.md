@@ -27,15 +27,19 @@
 
 <table>
   <tr>
-    <td align="center">
-      <img src="../assets/ckbfs-blog/week-12-blog-list.png" alt="Blog Listing UI" width="100%" />
+    <td align="center" width="50%">
+      <img width="1470" height="919" alt="Screenshot 2025-12-29 at 7 09 56 PM" src="https://github.com/user-attachments/assets/a626c66b-3773-47f8-a74d-6ea52343a706" />
       <p>1. Blog Listing Page</p>
+    </td>
+    <td align="center" width="50%">
+     <img width="1470" height="919" alt="Screenshot 2025-12-29 at 7 21 52 PM" src="https://github.com/user-attachments/assets/49914366-fb73-4d06-bdf5-d89d764d2f6d" />
+      <p>2. Publish to CKBFS Form</p>
     </td>
   </tr>
   <tr>
-    <td align="center">
-      <img src="../assets/ckbfs-blog/week-12-publish-form.png" alt="Publish Form UI" width="100%" />
-      <p>2. Publish to CKBFS Form</p>
+    <td align="center" colspan="2">
+      <img width="1470" height="919" alt="Screenshot 2025-12-29 at 7 59 21 PM" src="https://github.com/user-attachments/assets/282c055f-07f1-479f-a51f-98b5f067fd1b" />
+      <p><strong>3. Local Testing</strong></p>
     </td>
   </tr>
 </table>
@@ -51,35 +55,24 @@
 
 ---
 
-### Module 4: Local Testing & Validation
-- Successfully ran the full application locally using Vite.
-- Verified:
-  - UI rendering
-  - Navigation flow
-  - Blog content loading
-  - Publish form behavior
-- Confirmed clean build with no runtime or console errors.
-
----
-
-### Key Learnings
-- Practical understanding of **CKBFS concepts (CID-based content addressing)**.
-- Translating decentralized storage architecture into real frontend logic.
-- Structuring scalable Web3 applications with clear separation of concerns.
-- Building clean, user-friendly UI for decentralized applications.
-
----
-
 ### Next Steps (Week 13)
 
-- **Module 5: Real CKBFS Integration**
+- **Module 4: Real CKBFS Integration**
   - Replace mock CKBFS service with actual CKBFS upload & fetch logic.
   - Store blog content and metadata on CKBFS.
-- **Module 6: Backend Scripts**
+- **Module 5: Backend Scripts**
   - Implement real `uploadContent.js` and `uploadMetadata.js`.
   - Handle CID generation and metadata indexing.
-- **Module 7: Enhancements**
+- **Module 6: Enhancements**
   - Improve Markdown rendering.
   - Add better loading states and error handling.
   - Prepare for wallet-based author identity in future iterations.
+
+
+
+
+
+<img width="1470" height="919" alt="Screenshot 2025-12-29 at 7 59 21 PM" src="https://github.com/user-attachments/assets/282c055f-07f1-479f-a51f-98b5f067fd1b" />
+
+
 
