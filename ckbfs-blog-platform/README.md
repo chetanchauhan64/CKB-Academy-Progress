@@ -100,5 +100,4 @@ For more details, see [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
 ---
 
-## 📁 Project Structure
 
