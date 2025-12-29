@@ -25,24 +25,38 @@
   - Publish Post
   - Individual Blog View
 
-<table>
+<table style="width:100%; text-align:center;">
   <tr>
-    <td align="center" width="50%">
-      <img width="1470" height="919" alt="Screenshot 2025-12-29 at 7 09 56 PM" src="https://github.com/user-attachments/assets/a626c66b-3773-47f8-a74d-6ea52343a706" />
-      <p>1. Blog Listing Page</p>
+    <td style="width:33.3%; vertical-align:top; text-align:center;">
+      <img
+        width="1470"
+        height="919"
+        alt="Blog Listing Page"
+        src="https://github.com/user-attachments/assets/a626c66b-3773-47f8-a74d-6ea52343a706"
+      />
+      <p style="text-align:center;">1. Blog Listing Page</p>
     </td>
-    <td align="center" width="50%">
-     <img width="1470" height="919" alt="Screenshot 2025-12-29 at 7 21 52 PM" src="https://github.com/user-attachments/assets/49914366-fb73-4d06-bdf5-d89d764d2f6d" />
-      <p>2. Publish to CKBFS Form</p>
+    <td style="width:33.3%; vertical-align:top; text-align:center;">
+      <img
+        width="1470"
+        height="919"
+        alt="Publish to CKBFS Form"
+        src="https://github.com/user-attachments/assets/49914366-fb73-4d06-bdf5-d89d764d2f6d"
+      />
+      <p style="text-align:center;">2. Publish to CKBFS Form</p>
     </td>
-  </tr>
-  <tr>
-    <td align="center" colspan="2">
-      <img width="1470" height="919" alt="Screenshot 2025-12-29 at 7 59 21 PM" src="https://github.com/user-attachments/assets/282c055f-07f1-479f-a51f-98b5f067fd1b" />
-      <p><strong>3. Local Testing</strong></p>
+    <td style="width:33.3%; vertical-align:top; text-align:center;">
+      <img
+        width="1470"
+        height="919"
+        alt="Local Testing"
+        src="https://github.com/user-attachments/assets/282c055f-07f1-479f-a51f-98b5f067fd1b"
+      />
+      <p style="text-align:center;">3. Local Testing</p>
     </td>
   </tr>
 </table>
+
 
 ---
 
