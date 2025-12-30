@@ -31,16 +31,11 @@
       <p style="text-align:center;">1. Backend Server Running</p>
     </td>
     <td style="width:33.3%; vertical-align:top; text-align:center;">
-     <img width="1470" height="923" alt="Screenshot 2025-12-30 at 10 02 14 PM" src="https://github.com/user-attachments/assets/ce6286a2-8d66-46eb-9b41-36c1f28b6843" />
+ <img width="1470" height="923" alt="Screenshot 2025-12-30 at 11 22 23 PM" src="https://github.com/user-attachments/assets/a757a095-f66f-458d-ad5c-5e3e152811dd" />
       <p style="text-align:center;">2. CKBFS Service Layer</p>
     </td>
     <td style="width:33.3%; vertical-align:top; text-align:center;">
-      <img
-        width="1470"
-        height="919"
-        alt="Local Setup & Installation"
-        src="./week-13/terminal-install.png"
-      />
+     <img width="1470" height="923" alt="Screenshot 2025-12-30 at 11 12 31 PM" src="https://github.com/user-attachments/assets/b16fe122-b0e6-4812-998a-60e94ee6e036" />
       <p style="text-align:center;">3. Local Setup & Installation</p>
     </td>
   </tr>
@@ -60,21 +55,11 @@
 <table style="width:100%; text-align:center;">
   <tr>
     <td style="width:50%; vertical-align:top; text-align:center;">
-      <img
-        width="1470"
-        height="919"
-        alt="Blog Listing Page"
-        src="./week-13/ui-home.png"
-      />
+     <img width="1470" height="923" alt="Screenshot 2025-12-30 at 11 27 17 PM" src="https://github.com/user-attachments/assets/0874a2de-108f-48c7-981c-c551467010c7" />
       <p style="text-align:center;">4. Blog Listing Page</p>
     </td>
     <td style="width:50%; vertical-align:top; text-align:center;">
-      <img
-        width="1470"
-        height="919"
-        alt="Publish Success"
-        src="./week-13/publish-success.png"
-      />
+   <img width="1470" height="923" alt="Screenshot 2025-12-30 at 11 36 16 PM" src="https://github.com/user-attachments/assets/e8b4e587-df62-4a0c-8397-f29d08304c61" />
       <p style="text-align:center;">5. Publish Success</p>
     </td>
   </tr>
@@ -101,6 +86,9 @@
   - Improve markdown rendering
   - Optimize error handling & loading states
   - Prepare demo-ready documentation
+
+
+
 
 
 
