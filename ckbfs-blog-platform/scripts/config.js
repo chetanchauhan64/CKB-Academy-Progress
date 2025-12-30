@@ -1,29 +1,49 @@
-/**
- * CKBFS Configuration
- * 
- * This file contains configuration for connecting to the Nervos CKB network
- * and CKBFS service endpoints.
- */
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-require('dotenv').config();
+dotenv.config();
 
-module.exports = {
-  // CKB Node Configuration
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PROJECT_ROOT = join(__dirname, '..');
+
+// Validate required environment variables
+const requiredEnvVars = ['CKBFS_GATEWAY_URL'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingVars.forEach(varName => console.error(`   - ${varName}`));
+  console.error('\n💡 Please create a .env file based on .env.example');
+  process.exit(1);
+}
+
+const config = {
+  // CKBFS Configuration
+  ckbfs: {
+    gatewayUrl: process.env.CKBFS_GATEWAY_URL,
+    apiKey: process.env.CKBFS_API_KEY || '',
+  },
+
+  // CKB Node Configuration (for future use)
   ckb: {
     nodeUrl: process.env.CKB_NODE_URL || 'http://localhost:8114',
     indexerUrl: process.env.CKB_INDEXER_URL || 'http://localhost:8116',
   },
 
-  // CKBFS Configuration
-  ckbfs: {
-    gatewayUrl: process.env.CKBFS_GATEWAY_URL || 'https://ckbfs.dev',
-    apiKey: process.env.CKBFS_API_KEY || '',
+  // Storage Paths
+  paths: {
+    root: PROJECT_ROOT,
+    content: join(PROJECT_ROOT, 'content'),
+    posts: join(PROJECT_ROOT, 'content', 'posts'),
+    media: join(PROJECT_ROOT, 'content', 'media'),
+    metadata: join(PROJECT_ROOT, 'content', 'metadata.json'),
   },
 
-  // Storage Configuration
-  storage: {
-    contentDir: './content/posts',
-    mediaDir: './content/media',
-    metadataFile: './content/metadata.json'
-  }
+  // Environment
+  env: process.env.NODE_ENV || 'development',
+  isDev: process.env.NODE_ENV !== 'production',
 };
+
+export default config;

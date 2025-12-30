@@ -1,108 +1,158 @@
-/**
- * Upload Blog Metadata to CKBFS
- * 
- * This script manages blog post metadata:
- * - Stores metadata in CKBFS for decentralized discovery
- * - Maintains local index for quick lookups
- * 
- * Usage: node scripts/uploadMetadata.js
- */
-
-const fs = require('fs').promises;
-const path = require('path');
-const config = require('./config');
-const { generateCID } = require('./uploadContent');
+import { readFile, writeFile } from 'fs/promises';
+import { existsSync } from 'fs';
+import config from './config.js';
+import { generateCID, simulateUpload, log } from './utils.js';
 
 /**
- * Load existing metadata from local storage
+ * Manage blog metadata
+ * 
+ * Metadata structure:
+ * - Stores array of blog posts with their CIDs
+ * - Cached locally in content/metadata.json
+ * - Uploaded to CKBFS for decentralized discovery
  */
+
 async function loadMetadata() {
   try {
-    const data = await fs.readFile(config.storage.metadataFile, 'utf8');
+    if (!existsSync(config.paths.metadata)) {
+      log.warn('No existing metadata found, creating new file');
+      return [];
+    }
+    
+    const data = await readFile(config.paths.metadata, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    // If file doesn't exist, return empty array
+    log.error(`Failed to load metadata: ${error.message}`);
     return [];
   }
 }
 
-/**
- * Save metadata to local storage and upload to CKBFS
- * 
- * @param {Array} metadata - Array of blog post metadata
- * @returns {Promise<string>} - CID of the metadata file
- */
 async function saveMetadata(metadata) {
-  // Save locally for caching
-  await fs.writeFile(
-    config.storage.metadataFile,
-    JSON.stringify(metadata, null, 2)
-  );
-
-  // Upload to CKBFS
-  const metadataBuffer = Buffer.from(JSON.stringify(metadata));
-  const cid = generateCID(metadataBuffer);
-
-  // TODO: Upload to CKBFS
-  // await uploadToC KBFS(metadataBuffer);
-
-  console.log(`✅ Metadata saved with CID: ${cid}`);
-  return cid;
+  try {
+    // Save locally
+    const metadataJson = JSON.stringify(metadata, null, 2);
+    await writeFile(config.paths.metadata, metadataJson);
+    
+    // Generate CID for CKBFS
+    const cid = generateCID(metadataJson);
+    
+    // Simulate upload to CKBFS
+    await simulateUpload(metadataJson.length);
+    
+    log.success(`Metadata saved (CID: ${cid})`);
+    return cid;
+  } catch (error) {
+    log.error(`Failed to save metadata: ${error.message}`);
+    throw error;
+  }
 }
 
-/**
- * Add a new blog post to metadata
- * 
- * @param {object} postData - Blog post information
- * @param {string} postData.title - Post title
- * @param {string} postData.author - Author name
- * @param {string} postData.contentCID - CID of post content
- * @param {string} postData.excerpt - Post excerpt
- * @param {Array<string>} postData.tags - Post tags
- */
 async function addPost(postData) {
-  const metadata = await loadMetadata();
+  try {
+    console.log('📚 Adding post to metadata\n');
+    console.log('━'.repeat(50));
 
-  const newPost = {
-    id: String(metadata.length + 1),
-    cid: postData.contentCID,
-    title: postData.title,
-    author: postData.author,
-    timestamp: new Date().toISOString(),
-    excerpt: postData.excerpt,
-    tags: postData.tags || []
-  };
+    // Validate required fields
+    const required = ['title', 'author', 'contentCID', 'excerpt'];
+    const missing = required.filter(field => !postData[field]);
+    
+    if (missing.length > 0) {
+      throw new Error(`Missing required fields: ${missing.join(', ')}`);
+    }
 
-  metadata.unshift(newPost); // Add to beginning
-  const metadataCID = await saveMetadata(metadata);
+    // Load existing metadata
+    log.info('Loading existing metadata...');
+    const metadata = await loadMetadata();
 
-  console.log(`\n✅ Blog post added successfully!`);
-  console.log(`📝 Post ID: ${newPost.id}`);
-  console.log(`🔑 Content CID: ${newPost.cid}`);
-  console.log(`📚 Metadata CID: ${metadataCID}`);
+    // Create new post entry
+    const newPost = {
+      id: String(metadata.length + 1),
+      cid: postData.contentCID,
+      title: postData.title,
+      author: postData.author,
+      timestamp: new Date().toISOString(),
+      excerpt: postData.excerpt.substring(0, 200),
+      tags: postData.tags || [],
+    };
 
-  return { post: newPost, metadataCID };
+    log.info(`Creating entry for: "${newPost.title}"`);
+
+    // Add to beginning of array (newest first)
+    metadata.unshift(newPost);
+
+    // Save updated metadata
+    log.upload('Uploading metadata to CKBFS...');
+    const metadataCID = await saveMetadata(metadata);
+
+    console.log('\n📊 Post Added:\n');
+    console.log(`   ID:        ${newPost.id}`);
+    console.log(`   Title:     ${newPost.title}`);
+    console.log(`   Author:    ${newPost.author}`);
+    console.log(`   CID:       ${newPost.cid}`);
+    console.log(`   Meta CID:  ${metadataCID}`);
+    console.log('\n' + '━'.repeat(50));
+    log.success('Post added to metadata!');
+
+    return { post: newPost, metadataCID };
+
+  } catch (error) {
+    log.error(`Failed to add post: ${error.message}`);
+    throw error;
+  }
+}
+
+async function listPosts() {
+  try {
+    const metadata = await loadMetadata();
+    
+    console.log('\n📚 Blog Posts\n');
+    console.log('━'.repeat(80));
+    
+    if (metadata.length === 0) {
+      console.log('   No posts found');
+    } else {
+      metadata.forEach((post, index) => {
+        console.log(`\n${index + 1}. ${post.title}`);
+        console.log(`   Author: ${post.author}`);
+        console.log(`   CID: ${post.cid}`);
+        console.log(`   Date: ${new Date(post.timestamp).toLocaleDateString()}`);
+        console.log(`   Tags: ${post.tags.join(', ') || 'None'}`);
+      });
+    }
+    
+    console.log('\n' + '━'.repeat(80));
+    console.log(`Total: ${metadata.length} posts\n`);
+    
+    return metadata;
+  } catch (error) {
+    log.error(`Failed to list posts: ${error.message}`);
+    throw error;
+  }
 }
 
 // CLI Interface
-if (require.main === module) {
-  const examplePost = {
-    title: 'Getting Started with CKBFS',
-    author: 'Dev Team',
-    contentCID: 'bafkreiexample1234567890abcdefghijklmnopqrstuvwxyz',
-    excerpt: 'Learn how to build decentralized applications with CKBFS...',
-    tags: ['Tutorial', 'CKBFS', 'Getting Started']
-  };
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const action = process.argv[2];
 
-  addPost(examplePost)
-    .then(result => {
-      console.log('\n📊 Result:');
-      console.log(JSON.stringify(result, null, 2));
-    })
-    .catch(error => {
-      console.error('Failed to add post:', error);
-      process.exit(1);
-    });
+  if (action === 'list') {
+    listPosts().catch(() => process.exit(1));
+  } else if (action === 'add') {
+    // Example post data
+    const examplePost = {
+      title: 'Getting Started with CKBFS',
+      author: 'Development Team',
+      contentCID: 'bafkreiexample1234567890abcdefghijklmnopqrstuvwxyz',
+      excerpt: 'Learn how to build decentralized applications with CKBFS and Nervos CKB...',
+      tags: ['Tutorial', 'CKBFS', 'Web3'],
+    };
+
+    addPost(examplePost).catch(() => process.exit(1));
+  } else {
+    console.log('Usage:');
+    console.log('  node scripts/uploadMetadata.js list    - List all posts');
+    console.log('  node scripts/uploadMetadata.js add     - Add example post');
+    process.exit(1);
+  }
 }
 
-module.exports = { addPost, loadMetadata, saveMetadata };
+export { addPost, loadMetadata, saveMetadata, listPosts };

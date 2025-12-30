@@ -487,7 +487,7 @@ function PublishForm({ onPublish }) {
 }
 
 // Main App Component
-export default function App() {
+  function App() {
   const [view, setView] = useState('list');
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -513,22 +513,39 @@ export default function App() {
     setPostContent(content);
     setLoading(false);
   };
+  
+  const handlePublish = async (formData) => {
+    try {
+      setIsPublishing(true);
 
-  const handlePublish = (formData) => {
-    const newPost = {
-      id: String(posts.length + 1),
-      cid: 'bafkrei' + Math.random().toString(36).substring(2, 50),
-      title: formData.title,
-      author: formData.author,
-      timestamp: new Date().toISOString(),
-      excerpt: formData.content.slice(0, 100) + '...',
-      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean)
-    };
-    
-    setPosts([newPost, ...posts]);
-    setView('list');
-    alert('✅ Post published to CKBFS successfully!');
-  };
+      const result = await ckbfsService.publishPost({
+        title: formData.title,
+        author: formData.author,
+        content: formData.content,
+        tags: formData.tags
+          .split(',')
+          .map(tag => tag.trim())
+          .filter(Boolean),
+      });
+  
+      const newPost = result.post;
+  
+      setPosts(prevPosts => [newPost, ...prevPosts]);
+      setView('list');
+  
+      alert(
+        `✅ Post published successfully!\n\n` +
+        `Content CID: ${result.contentCID}\n` +
+        `Metadata CID: ${result.metadataCID}`
+      );
+  
+    } catch (error) {
+      alert(`❌ Failed to publish post: ${error.message}`);
+    } finally {
+      setIsPublishing(false);
+    }
+  };  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">

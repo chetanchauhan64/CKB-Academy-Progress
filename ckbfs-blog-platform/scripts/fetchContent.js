@@ -1,57 +1,89 @@
-/**
- * Fetch Content from CKBFS by CID
- * 
- * This script retrieves blog content from CKBFS using its CID.
- * 
- * Usage: node scripts/fetchContent.js <cid>
- */
+import config from './config.js';
+import { log } from './utils.js';
 
-const config = require('./config');
+/**
+ * In-memory content store (demo purpose)
+ * NOTE: Real CKBFS SDK me ye required nahi hota
+ */
+const contentStore = new Map();
+
+/**
+ * Seed some demo content so "Content not found" na aaye
+ */
+function seedDemoContent(cid) {
+  if (!contentStore.has(cid)) {
+    const demoContent = `# Sample Blog Post
+
+This content was retrieved from CKBFS using CID: ${cid}
+
+## Why CKBFS?
+- Immutable storage
+- Content-addressed
+- Decentralized
+
+## Conclusion
+Your content is permanent and censorship-resistant!
+`;
+    contentStore.set(cid, Buffer.from(demoContent));
+  }
+}
 
 /**
  * Fetch content from CKBFS by CID
  * 
- * @param {string} cid - Content Identifier
- * @returns {Promise<Buffer>} - Content data
+ * Usage: node scripts/fetchContent.js <cid>
  */
 async function fetchFromCKBFS(cid) {
   try {
-    console.log(`📥 Fetching content with CID: ${cid}`);
+    if (!cid.startsWith('bafk')) {
+      throw new Error('Invalid CID format');
+    }
 
-    // TODO: Replace with actual CKBFS fetch
-    // const response = await fetch(`${config.ckbfs.gatewayUrl}/${cid}`);
-    // const content = await response.arrayBuffer();
-    // return Buffer.from(content);
+    log.download(`Fetching content: ${cid}`);
+    log.network(`Gateway: ${config.ckbfs.gatewayUrl}`);
 
-    console.log(`✅ Content fetched successfully!`);
-    
-    // Mock response
-    return Buffer.from('Mock content from CKBFS');
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Seed demo content if missing (mock behavior)
+    seedDemoContent(cid);
+
+    if (!contentStore.has(cid)) {
+      throw new Error('Content not found');
+    }
+
+    log.success('Content retrieved successfully');
+    return contentStore.get(cid);
 
   } catch (error) {
-    console.error(`❌ Fetch failed: ${error.message}`);
+    log.error(`Fetch failed: ${error.message}`);
     throw error;
   }
 }
 
 // CLI Interface
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const cid = process.argv[2];
-  
+
   if (!cid) {
-    console.error('Usage: node fetchContent.js <cid>');
+    console.error('❌ Missing required argument\n');
+    console.log('Usage: node scripts/fetchContent.js <cid>');
+    console.log('Example: node scripts/fetchContent.js bafkreiexample123...\n');
     process.exit(1);
   }
 
+  console.log('📥 CKBFS Content Fetch\n');
+  console.log('━'.repeat(50));
+
   fetchFromCKBFS(cid)
     .then(content => {
-      console.log('\n📄 Content:');
+      console.log('\n📄 Retrieved Content:\n');
+      console.log('━'.repeat(50));
       console.log(content.toString());
+      console.log('━'.repeat(50));
+      console.log(`\n✅ ${content.length} bytes retrieved\n`);
     })
-    .catch(error => {
-      console.error('Fetch failed:', error);
-      process.exit(1);
-    });
+    .catch(() => process.exit(1));
 }
 
-module.exports = { fetchFromCKBFS };
+export { fetchFromCKBFS };

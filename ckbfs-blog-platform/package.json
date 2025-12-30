@@ -2,20 +2,17 @@
   "name": "ckbfs-blog-platform",
   "version": "1.0.0",
   "description": "Decentralized blog platform using CKBFS",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
-    "upload": "node scripts/uploadContent.js",
-    "metadata": "node scripts/uploadMetadata.js"
+    "upload:content": "node scripts/uploadContent.js",
+    "upload:media": "node scripts/uploadMedia.js",
+    "upload:metadata": "node scripts/uploadMetadata.js",
+    "fetch:content": "node scripts/fetchContent.js"
   },
-  "keywords": ["ckbfs", "nervos", "blockchain", "decentralized", "blog"],
+  "keywords": ["ckbfs", "nervos", "blockchain", "blog"],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^16.0.3"
-  },
-  "devDependencies": {
-    "eslint": "^8.50.0"
+    "dotenv": "^16.3.1"
   }
 }

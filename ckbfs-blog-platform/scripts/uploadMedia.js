@@ -1,82 +1,119 @@
+import { readFile } from 'fs/promises';
+import { basename, extname } from 'path';
+import config from './config.js';
+import { generateCID, formatBytes, simulateUpload, log } from './utils.js';
+
 /**
- * Upload Media Files to CKBFS
+ * Upload media files (images) to CKBFS
  * 
- * This script handles image uploads for blog posts.
- * Images are stored in CKBFS and referenced by CID.
+ * Supported formats: .jpg, .jpeg, .png, .gif, .webp, .svg
  * 
  * Usage: node scripts/uploadMedia.js <image-path>
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { generateCID } = require('./uploadContent');
+const SUPPORTED_FORMATS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
 
-/**
- * Upload an image to CKBFS
- * 
- * @param {string} imagePath - Path to image file
- * @returns {Promise<object>} - Upload result with CID
- */
-async function uploadImage(imagePath) {
+async function uploadMediaToCKBFS(imagePath) {
+  const startTime = Date.now();
+
   try {
-    console.log(`🖼️  Reading image: ${imagePath}`);
-    
-    const imageBuffer = await fs.readFile(imagePath);
-    const imageSize = imageBuffer.length;
-    const imageType = path.extname(imagePath).toLowerCase();
+    // Validate file extension
+    const ext = extname(imagePath).toLowerCase();
+    if (!SUPPORTED_FORMATS.includes(ext)) {
+      throw new Error(`Unsupported format: ${ext}. Supported: ${SUPPORTED_FORMATS.join(', ')}`);
+    }
 
-    console.log(`📏 Image size: ${(imageSize / 1024).toFixed(2)} KB`);
-    console.log(`📸 Image type: ${imageType}`);
+    // Step 1: Read image
+    log.upload('Reading image...');
+    const imageBuffer = await readFile(imagePath);
+    const filename = basename(imagePath);
+    const filesize = imageBuffer.length;
 
-    // Generate CID
+    log.file(`Image: ${filename}`);
+    log.file(`Size: ${formatBytes(filesize)}`);
+    log.file(`Type: ${ext}`);
+
+    // Warn if image is large
+    if (filesize > 5 * 1024 * 1024) {
+      log.warn('Large file size detected (>5MB). Consider compressing.');
+    }
+
+    // Step 2: Generate CID
+    log.hash('Generating CID...');
     const cid = generateCID(imageBuffer);
-    
-    // TODO: Upload to CKBFS
-    // const response = await fetch(`${config.ckbfs.gatewayUrl}/upload`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Bearer ${config.ckbfs.apiKey}`,
-    //     'Content-Type': `image/${imageType.slice(1)}`
-    //   },
-    //   body: imageBuffer
-    // });
+    log.hash(`CID: ${cid}`);
 
-    console.log(`✅ Image uploaded successfully!`);
-    console.log(`🔗 CKBFS URL: ${config.ckbfs.gatewayUrl}/${cid}`);
+    // Step 3: Upload to CKBFS
+    log.network('Uploading to CKBFS...');
+    await simulateUpload(filesize);
+
+    // In production:
+    /*
+    const formData = new FormData();
+    formData.append('file', imageBuffer, filename);
+    
+    const response = await fetch(`${config.ckbfs.gatewayUrl}/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${config.ckbfs.apiKey}`
+      },
+      body: formData
+    });
+    const { cid, url } = await response.json();
+    */
+
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    const imageUrl = `${config.ckbfs.gatewayUrl}/${cid}`;
+
+    log.success(`Upload completed in ${duration}s`);
+    log.info(`Image URL: ${imageUrl}`);
 
     return {
       success: true,
       cid,
-      size: imageSize,
-      type: imageType,
-      url: `${config.ckbfs.gatewayUrl}/${cid}`,
-      uploadedAt: new Date().toISOString()
+      filename,
+      size: filesize,
+      sizeFormatted: formatBytes(filesize),
+      format: ext,
+      url: imageUrl,
+      uploadedAt: new Date().toISOString(),
     };
 
   } catch (error) {
-    console.error(`❌ Image upload failed: ${error.message}`);
+    log.error(`Media upload failed: ${error.message}`);
     throw error;
   }
 }
 
 // CLI Interface
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const imagePath = process.argv[2];
-  
+
   if (!imagePath) {
-    console.error('Usage: node uploadMedia.js <image-path>');
+    console.error('❌ Missing required argument\n');
+    console.log('Usage: node scripts/uploadMedia.js <image-path>');
+    console.log('Example: node scripts/uploadMedia.js content/media/hero.png\n');
+    console.log('Supported formats:', SUPPORTED_FORMATS.join(', '));
     process.exit(1);
   }
 
-  uploadImage(imagePath)
+  console.log('🖼️  CKBFS Media Upload\n');
+  console.log('━'.repeat(50));
+
+  uploadMediaToCKBFS(imagePath)
     .then(result => {
-      console.log('\n📊 Upload Result:');
-      console.log(JSON.stringify(result, null, 2));
+      console.log('\n📊 Upload Result:\n');
+      console.log(`   Filename:  ${result.filename}`);
+      console.log(`   Format:    ${result.format}`);
+      console.log(`   Size:      ${result.sizeFormatted}`);
+      console.log(`   CID:       ${result.cid}`);
+      console.log(`   URL:       ${result.url}`);
+      console.log('\n💡 Use this URL in your blog posts:\n');
+      console.log(`   ![Alt text](${result.url})`);
+      console.log('\n' + '━'.repeat(50));
+      log.success('Done!');
     })
-    .catch(error => {
-      console.error('Upload failed:', error);
-      process.exit(1);
-    });
+    .catch(() => process.exit(1));
 }
 
-module.exports = { uploadImage };
+export { uploadMediaToCKBFS };
