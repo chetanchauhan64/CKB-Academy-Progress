@@ -9,7 +9,12 @@
 ---
 ## Dashboard
 
-## ✨ Features
+a. View your published posts, version history, DAO votes, and on-chain activity in real-time.
+
+<img width="1470" height="923" alt="Dash" src="https://github.com/user-attachments/assets/a4b691f0-af79-43a1-b2a6-dee62170bb34" />
+
+
+## Features
 
 | Feature | Description |
 |---|---|
@@ -26,7 +31,7 @@
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Framework:** Next.js 14 (App Router)
 - **Blockchain:** Nervos CKB Testnet via `@ckb-ccc/ccc`
@@ -38,7 +43,7 @@
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the repo
 
@@ -119,7 +124,7 @@ ChainPress/
 
 ---
 
-## 🔑 Environment Variables
+## Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
@@ -127,7 +132,7 @@ ChainPress/
 
 ---
 
-## 🔗 CKBFS Protocol
+## CKBFS Protocol
 
 ChainPress uses the CKBFS protocol to store blog posts permanently on Nervos CKB:
 
@@ -149,7 +154,7 @@ Backlinks form an immutable version chain — each append references all previou
 
 ---
 
-## 🤖 AI Writing Assist
+## AI Writing Assist
 
 The `✨ AI Assist` button in the editor uses **Claude 3 Haiku** (via OpenRouter) with automatic fallback to **Mixtral 8x7b** if Claude is unavailable:
 
@@ -161,7 +166,7 @@ Without an API key, the app runs in **mock mode** with demo responses.
 
 ---
 
-## 🏗 Architecture Decisions
+## Architecture Decisions
 
 - **No server-side data fetching** — all CKBFS reads happen in client-only API routes to avoid Next.js fetch cache limits (responses can be >2MB)
 - **RPC Fallback** — `fetchWithRetry` cycles through multiple CKB testnet endpoints with a 10s timeout per attempt
@@ -170,10 +175,8 @@ Without an API key, the app runs in **mock mode** with demo responses.
 
 ---
 
-## 📜 License
+## License
 
 MIT — Built for the **CKB Academy** learning program.
 
----
-
-> _"Your words, permanently on-chain."_ ⛓
+Thank you ♥️
