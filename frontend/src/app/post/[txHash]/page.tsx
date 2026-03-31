@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+
 import { useStore } from '@/lib/store';
 import type { VoteRecord } from '@/lib/store';
 import { CKBFSResolvedData, buildVersionTreeWithForks, VersionNode } from '@/lib/ckbfs/indexer';
@@ -47,13 +47,11 @@ export default function PostPage({ params }: { params: PageParams }) {
   const { walletAddress, walletConnected, pushNotification, votes, votePost, loadVotes } = useStore();
 
   const [post, setPost] = useState<CKBFSResolvedData | null>(null);
-  const [allPosts, setAllPosts] = useState<CKBFSResolvedData[]>([]);
   const [treeRoot, setTreeRoot] = useState<VersionNode | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'content' | 'history' | 'tree' | 'cell'>('content');
-  const router = useRouter();
 
   // Action modals
   const [showTransfer, setShowTransfer] = useState(false);
@@ -118,7 +116,6 @@ export default function PostPage({ params }: { params: PageParams }) {
           .then(r => r.json())
           .then((feedJson: { success: boolean; data: CKBFSResolvedData[] }) => {
             const resolvedFeed = feedJson.success ? feedJson.data : [];
-            setAllPosts(resolvedFeed);
             setTreeRoot(buildVersionTreeWithForks(resolvedPost, resolvedFeed));
           })
           .catch(() => {
@@ -172,7 +169,6 @@ export default function PostPage({ params }: { params: PageParams }) {
           .then(r => r.json())
           .then((feedJson: { success: boolean; data: CKBFSResolvedData[] }) => {
             const resolvedFeed = feedJson.success ? feedJson.data : [];
-            setAllPosts(resolvedFeed);
             setTreeRoot(buildVersionTreeWithForks(resolvedPost, resolvedFeed));
           })
           .catch(() => setTreeRoot(buildVersionTreeWithForks(resolvedPost, [])));

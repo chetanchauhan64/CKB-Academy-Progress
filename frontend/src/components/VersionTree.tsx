@@ -26,10 +26,9 @@ interface TreeNodeProps {
   node: VersionNode;
   currentTxHash: string;
   versionLabel: string;
-  isLast: boolean;
 }
 
-function TreeNode({ node, currentTxHash, versionLabel, isLast }: TreeNodeProps) {
+function TreeNode({ node, currentTxHash, versionLabel }: TreeNodeProps) {
   const router = useRouter();
   const isCurrent = node.txHash === currentTxHash;
   const isGenesis = node.depth === 0 && !node.isFork;
@@ -207,7 +206,6 @@ function TreeNode({ node, currentTxHash, versionLabel, isLast }: TreeNodeProps) 
                   node={child}
                   currentTxHash={currentTxHash}
                   versionLabel={childLabel}
-                  isLast={childIsLast}
                 />
               </div>
             );
@@ -285,7 +283,6 @@ export default function VersionTree({ root, currentTxHash }: VersionTreeProps) {
         node={root}
         currentTxHash={currentTxHash}
         versionLabel="V1"
-        isLast={true}
       />
     </div>
   );
