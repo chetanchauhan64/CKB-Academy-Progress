@@ -5,7 +5,6 @@ import { ccc } from '@ckb-ccc/ccc';
 
 // CKB RPC responses exceed Next.js 2MB fetch cache limit — opt out of caching.
 export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
 
 
 type RouteParams = { params: Promise<{ txHash: string }> };

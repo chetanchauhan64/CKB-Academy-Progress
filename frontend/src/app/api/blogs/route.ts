@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
 import { fetchAllPosts } from '@/lib/ckbfs/indexer';
 
-// CKB RPC responses are 2-3MB — way over Next.js's 2MB fetch cache limit.
 // Force dynamic rendering so Next.js never tries to cache these responses.
 export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
 
 export async function GET() {
   try {

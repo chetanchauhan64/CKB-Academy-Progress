@@ -3,7 +3,6 @@ import { fetchCellByTxHash, parseCKBFSCell } from '@/lib/ckbfs/indexer';
 
 // CKB RPC responses exceed Next.js 2MB fetch cache limit — opt out of caching.
 export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
 
 
 type RouteParams = { params: Promise<{ txHash: string }> };
