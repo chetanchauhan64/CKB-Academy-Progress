@@ -4,11 +4,10 @@
 
 ---
 
-## 🌐 Live Demo
-
-> _Run locally — see [Getting Started](#-getting-started) below._
+**Deployed on Vercel:** [https://ckb-academy-progress.vercel.app/](https://ckb-academy-progress.vercel.app/)
 
 ---
+## Dashboard
 
 ## ✨ Features
 
