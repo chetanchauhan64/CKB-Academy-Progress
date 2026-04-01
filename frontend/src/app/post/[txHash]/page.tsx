@@ -713,8 +713,26 @@ export default function PostPage({ params }: { params: PageParams }) {
           </div>
         )}
 
-        {/* Security: all-clear confirmation */}
-        {securityReport?.allClear && (
+        {/* Legacy post — neutral info note (checksum matched v1 schema, not an error) */}
+        {securityReport?.allClear && securityReport.checksumLegacy && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            padding: '9px 14px', marginBottom: '16px',
+            background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)',
+            borderRadius: 'var(--r-md)', fontSize: '0.78rem',
+            color: 'var(--text-secondary)',
+          }}>
+            <span style={{ fontSize: '1rem', flexShrink: 0 }}>🕰</span>
+            <span>
+              <strong style={{ color: 'var(--text-primary)', marginRight: '4px' }}>Legacy post</strong>
+              — published before the v2 schema (pre-monetisation fields).
+              Checksum verified against the original encoding. Content is intact and untampered.
+            </span>
+          </div>
+        )}
+
+        {/* Security: all-clear (v2 post) */}
+        {securityReport?.allClear && !securityReport.checksumLegacy && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: '8px',
             padding: '8px 14px', marginBottom: '16px',
