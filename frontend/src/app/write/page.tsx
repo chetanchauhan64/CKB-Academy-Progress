@@ -55,13 +55,15 @@ function WritePageInner() {
 
         // Build updated post with schema fields — content_type / filename stay unchanged (CKBFS immutability)
         const updatedPost: ValidatedBlogPost = {
-          title:       post.title,
-          content:     post.content,
-          description: post.description,
-          tags:        post.tags,
-          author:      existingPost.metadata.author,
-          created_at:  existingPost.metadata.created_at,
-          updated_at:  Date.now(),
+          title:        post.title,
+          description:  post.description ?? '',
+          author:       existingPost.metadata.author,
+          tags:         post.tags,
+          created_at:   existingPost.metadata.created_at,
+          updated_at:   Date.now(),
+          is_paid:      post.is_paid ?? false,
+          unlock_price: post.unlock_price ?? 0,
+          content:      post.content,
         };
         const result = await appendPost(signer, selectedPostTx, (existingPost as CKBFSResolvedData & { outputIndex?: number }).outputIndex ?? 0, updatedPost);
         router.push(`/post/${result.txHash}`);

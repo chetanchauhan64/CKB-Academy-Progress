@@ -32,14 +32,19 @@ export interface CKBFSWitness {
 
 // ─── Blog Post Metadata ──────────────────────────────────────────────────────
 // JSON payload stored as the witness content for blog posts.
+// Canonical field order must match publish.ts, append.ts, and metadata.ts:
+//   title → description → author → tags → created_at → updated_at
+//   → is_paid → unlock_price → content
 export interface BlogPostContent {
-  title: string;
-  body: string;           // Markdown
-  tags: string[];
-  author: string;         // CKB address (lock script hash)
-  created_at: number;     // Unix timestamp (ms)
-  version: number;        // 1 on publish, increments on append
-  summary?: string;
+  title:        string;
+  description:  string;        // Always present (default: '')
+  author:       string;        // CKB address
+  tags:         string[];
+  created_at:   number;        // Unix timestamp (ms)
+  updated_at:   number;        // Unix timestamp (ms)
+  is_paid:      boolean;       // Monetization flag
+  unlock_price: number;        // CKB amount (0 = free)
+  content:      string;        // Markdown body
 }
 
 // ─── Resolved Post ───────────────────────────────────────────────────────────

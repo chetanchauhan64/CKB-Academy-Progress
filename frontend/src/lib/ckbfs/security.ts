@@ -152,24 +152,27 @@ export function validateContentChecksum(
     author: string;
     created_at: number;
     updated_at?: number;
+    is_paid?: boolean;
+    unlock_price?: number;
   },
   content: string,
   backlinks: BackLink[],
   stored: number
 ): ValidationResult {
   try {
-    // IMPORTANT: key order must match publish.ts exactly (ValidatedBlogPost field order).
-    // publish.ts does JSON.stringify(post) where post is ValidatedBlogPost.
-    // Zod parses fields in schema definition order: title, description, author, tags,
-    // created_at, updated_at, cover_image, content.
+    // IMPORTANT: key order must match publish.ts exactly (canonical schema order).
+    // Order: title → description → author → tags → created_at → updated_at
+    //        → is_paid → unlock_price → content
     const contentBytes = stringToBytes(
       JSON.stringify({
-        title: metadata.title,
-        description: metadata.description ?? '',
-        author: metadata.author,
-        tags: metadata.tags ?? [],
-        created_at: metadata.created_at,
-        updated_at: metadata.updated_at ?? metadata.created_at,
+        title:        metadata.title,
+        description:  metadata.description ?? '',
+        author:       metadata.author,
+        tags:         metadata.tags ?? [],
+        created_at:   metadata.created_at,
+        updated_at:   metadata.updated_at ?? metadata.created_at,
+        is_paid:      metadata.is_paid ?? false,
+        unlock_price: metadata.unlock_price ?? 0,
         content,
       })
     );
@@ -221,6 +224,8 @@ export function runPostSecurityChecks(post: {
     author: string;
     created_at: number;
     updated_at?: number;
+    is_paid?: boolean;
+    unlock_price?: number;
   };
   content: string;
   backlinks: BackLink[];
@@ -234,16 +239,18 @@ export function runPostSecurityChecks(post: {
   let checksumError: string | undefined;
 
   // 1. Witness header (simulated from content)
-  // Key order matches ValidatedBlogPost field order in blogPostSchema (metadata.ts).
+  // Canonical key order matches publish.ts / metadata.ts schema.
   try {
     const contentJson = JSON.stringify({
-      title: post.metadata.title,
-      description: post.metadata.description ?? '',
-      author: post.metadata.author,
-      tags: post.metadata.tags ?? [],
-      created_at: post.metadata.created_at,
-      updated_at: post.metadata.updated_at ?? post.metadata.created_at,
-      content: post.content,
+      title:        post.metadata.title,
+      description:  post.metadata.description ?? '',
+      author:       post.metadata.author,
+      tags:         post.metadata.tags ?? [],
+      created_at:   post.metadata.created_at,
+      updated_at:   post.metadata.updated_at ?? post.metadata.created_at,
+      is_paid:      (post.metadata as Record<string, unknown>).is_paid ?? false,
+      unlock_price: (post.metadata as Record<string, unknown>).unlock_price ?? 0,
+      content:      post.content,
     });
     const wr = validateWitnessFromContent(contentJson);
     witnessValid = wr.valid;
