@@ -137,12 +137,36 @@ export function validateAllBacklinks(backlinks: BackLink[]): ValidationResult {
 
 // ─── 3. Checksum Integrity ────────────────────────────────────────────────────
 /**
+// ─── Legacy Schema Fallback ─────────────────────────────────────────────────
+/**
+ * Encodes post content using the PRE-v2 canonical format (7 fields, no is_paid/unlock_price).
+ * Used ONLY for validating posts that were published before the schema upgrade.
+ * Never use this for new publications.
+ */
+function toCanonicalBytesLegacy(fields: {
+  title: string;
+  description?: string;
+  author: string;
+  tags?: string[];
+  created_at: number;
+  updated_at: number;
+  content: string;
+}): Uint8Array {
+  const obj = {
+    title:       fields.title,
+    description: fields.description ?? '',
+    author:      fields.author,
+    tags:        fields.tags ?? [],
+    created_at:  fields.created_at,
+    updated_at:  fields.updated_at,
+    content:     fields.content,
+  };
+  return new TextEncoder().encode(JSON.stringify(obj));
+}
+
+/**
  * Recomputes the content checksum from the post's data and compares with stored.
- *
- * @param metadata  - Post metadata fields
- * @param content   - Post body content
- * @param backlinks - Current backlinks array
- * @param stored    - Stored checksum from the resolved cell
+ * Tries the current v2 schema first; falls back to legacy v1 schema for older posts.
  */
 export function validateContentChecksum(
   metadata: {
@@ -158,37 +182,58 @@ export function validateContentChecksum(
   content: string,
   backlinks: BackLink[],
   stored: number
-): ValidationResult {
+): ValidationResult & { legacy?: boolean } {
   try {
-    // IMPORTANT: use toCanonicalBytes() — the single source of truth.
-    // This guarantees byte-for-byte identity with publish.ts and append.ts.
-    const contentBytes = toCanonicalBytes({
+    const storedU32 = stored >>> 0;
+    const updatedAt = metadata.updated_at ?? metadata.created_at;
+
+    // ── Try v2 (current) schema first ────────────────────────────────────────
+    const bytesV2 = toCanonicalBytes({
       title:        metadata.title,
       description:  metadata.description,
       author:       metadata.author,
       tags:         metadata.tags,
       created_at:   metadata.created_at,
-      updated_at:   metadata.updated_at ?? metadata.created_at,
+      updated_at:   updatedAt,
       is_paid:      metadata.is_paid,
       unlock_price: metadata.unlock_price,
       content,
     });
+    const expectedV2 = backlinks.length === 0
+      ? computePublishChecksum(bytesV2)
+      : computeAppendChecksum(backlinks, bytesV2);
 
-    const expected = backlinks.length === 0
-      ? computePublishChecksum(contentBytes)
-      : computeAppendChecksum(backlinks, contentBytes);
-
-    const storedU32 = stored >>> 0;
-    const expectedU32 = expected >>> 0;
-
-    if (storedU32 !== expectedU32) {
-      return {
-        valid: false,
-        error: `Adler32 mismatch — stored: 0x${storedU32.toString(16).padStart(8, '0')}, computed: 0x${expectedU32.toString(16).padStart(8, '0')}`,
-      };
+    if ((expectedV2 >>> 0) === storedU32) {
+      return { valid: true };
     }
 
-    return { valid: true };
+    // ── Fall back to v1 (legacy) schema ───────────────────────────────────────
+    // Posts published before is_paid/unlock_price were added use 7-field JSON.
+    const bytesV1 = toCanonicalBytesLegacy({
+      title:       metadata.title,
+      description: metadata.description,
+      author:      metadata.author,
+      tags:        metadata.tags,
+      created_at:  metadata.created_at,
+      updated_at:  updatedAt,
+      content,
+    });
+    const expectedV1 = backlinks.length === 0
+      ? computePublishChecksum(bytesV1)
+      : computeAppendChecksum(backlinks, bytesV1);
+
+    if ((expectedV1 >>> 0) === storedU32) {
+      // Valid legacy post — not tampered, just published with older schema
+      return { valid: true, legacy: true };
+    }
+
+    // Neither schema matches — real mismatch
+    return {
+      valid: false,
+      error: `Adler32 mismatch — stored: 0x${storedU32.toString(16).padStart(8, '0')}, ` +
+             `computed v2: 0x${(expectedV2 >>> 0).toString(16).padStart(8, '0')}, ` +
+             `computed v1: 0x${(expectedV1 >>> 0).toString(16).padStart(8, '0')}`,
+    };
   } catch (e) {
     return {
       valid: false,
@@ -205,7 +250,9 @@ export interface PostSecurityReport {
   backlinksError?: string;
   checksumValid: boolean;
   checksumError?: string;
-  /** true = no warnings at all */
+  /** true = checksum matched the legacy v1 schema (pre-is_paid era). Not an error. */
+  checksumLegacy: boolean;
+  /** true = no warnings at all (legacy posts still pass) */
   allClear: boolean;
 }
 
@@ -234,6 +281,7 @@ export function runPostSecurityChecks(post: {
   let backlinksError: string | undefined;
   let checksumValid = true;
   let checksumError: string | undefined;
+  let checksumLegacy = false;
 
   // 1. Witness header (simulated from content)
   // Use toCanonicalBytes() for byte-exact match with publish.ts.
@@ -273,11 +321,12 @@ export function runPostSecurityChecks(post: {
     backlinksError = `Backlink check failed: ${e instanceof Error ? e.message : String(e)}`;
   }
 
-  // 3. Checksum
+  // 3. Checksum — supports legacy v1 schema fallback
   try {
     const cr = validateContentChecksum(post.metadata, post.content, post.backlinks, post.checksum);
     checksumValid = cr.valid;
     checksumError = cr.error;
+    checksumLegacy = !!(cr as { legacy?: boolean }).legacy;
   } catch (e) {
     checksumValid = false;
     checksumError = `Checksum check failed: ${e instanceof Error ? e.message : String(e)}`;
@@ -290,6 +339,7 @@ export function runPostSecurityChecks(post: {
     backlinksError,
     checksumValid,
     checksumError,
+    checksumLegacy,
     allClear: witnessValid && backlinksValid && checksumValid,
   };
 }
