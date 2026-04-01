@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
 import { ValidatedBlogPost } from '@/lib/ckbfs/metadata';
 import { computePublishChecksum, computeAppendChecksum } from '@/lib/ckbfs/checksum';
-import { stringToBytes } from '@/lib/ckbfs/witness';
 import { CKBFSResolvedData } from '@/lib/ckbfs/indexer';
 
 // Use marked for live preview
@@ -84,17 +83,20 @@ export default function Editor({ appendTargetTxHash, onSubmit, submitting }: Edi
   useEffect(() => {
     if (!title.trim() && !body.trim()) { setChecksumPreview(null); setWitnessBytes(0); return; }
 
-    // Use schema-aligned shape for accurate byte / checksum preview
+    // Canonical key order MUST match publish.ts exactly for an accurate preview
     const post = {
-      title:       title || '(Untitled)',
-      content:     body,
-      description: summary || '',
-      tags:        tags.split(',').map(t => t.trim()).filter(Boolean),
-      author:      walletAddress || 'ckb1demo',
-      created_at:  Date.now(),
-      updated_at:  Date.now(),
+      title:        title || '(Untitled)',
+      description:  summary || '',
+      author:       walletAddress || 'ckb1demo',
+      tags:         tags.split(',').map(t => t.trim()).filter(Boolean),
+      created_at:   Date.now(),
+      updated_at:   Date.now(),
+      is_paid:      isPaid,
+      unlock_price: isPaid ? (parseFloat(unlockPrice) || 10) : 0,
+      content:      body,
     };
-    const contentBytes = stringToBytes(JSON.stringify(post));
+    const encoder = new TextEncoder();
+    const contentBytes = encoder.encode(JSON.stringify(post));
     setWitnessBytes(6 + contentBytes.length);
 
     if (appendMode && selectedPostTx) {
@@ -107,7 +109,7 @@ export default function Editor({ appendTargetTxHash, onSubmit, submitting }: Edi
     }
     const cs = computePublishChecksum(contentBytes);
     setChecksumPreview(cs);
-  }, [title, body, tags, summary, appendMode, selectedPostTx, posts, walletAddress]);
+  }, [title, body, tags, summary, isPaid, unlockPrice, appendMode, selectedPostTx, posts, walletAddress]);
 
   // ── Toolbar actions ──────────────────────────────────────────────────────────
   function insertMarkdown(before: string, after: string = '') {
