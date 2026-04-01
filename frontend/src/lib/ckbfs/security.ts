@@ -10,7 +10,7 @@
  */
 
 import { BackLink } from './types';
-import { stringToBytes } from './witness';
+import { stringToBytes, toCanonicalBytes } from './witness';
 import { computePublishChecksum, computeAppendChecksum } from './checksum';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -160,22 +160,19 @@ export function validateContentChecksum(
   stored: number
 ): ValidationResult {
   try {
-    // IMPORTANT: key order must match publish.ts exactly (canonical schema order).
-    // Order: title → description → author → tags → created_at → updated_at
-    //        → is_paid → unlock_price → content
-    const contentBytes = stringToBytes(
-      JSON.stringify({
-        title:        metadata.title,
-        description:  metadata.description ?? '',
-        author:       metadata.author,
-        tags:         metadata.tags ?? [],
-        created_at:   metadata.created_at,
-        updated_at:   metadata.updated_at ?? metadata.created_at,
-        is_paid:      metadata.is_paid ?? false,
-        unlock_price: metadata.unlock_price ?? 0,
-        content,
-      })
-    );
+    // IMPORTANT: use toCanonicalBytes() — the single source of truth.
+    // This guarantees byte-for-byte identity with publish.ts and append.ts.
+    const contentBytes = toCanonicalBytes({
+      title:        metadata.title,
+      description:  metadata.description,
+      author:       metadata.author,
+      tags:         metadata.tags,
+      created_at:   metadata.created_at,
+      updated_at:   metadata.updated_at ?? metadata.created_at,
+      is_paid:      metadata.is_paid,
+      unlock_price: metadata.unlock_price,
+      content,
+    });
 
     const expected = backlinks.length === 0
       ? computePublishChecksum(contentBytes)
@@ -239,20 +236,26 @@ export function runPostSecurityChecks(post: {
   let checksumError: string | undefined;
 
   // 1. Witness header (simulated from content)
-  // Canonical key order matches publish.ts / metadata.ts schema.
+  // Use toCanonicalBytes() for byte-exact match with publish.ts.
   try {
-    const contentJson = JSON.stringify({
+    const contentBytes = toCanonicalBytes({
       title:        post.metadata.title,
-      description:  post.metadata.description ?? '',
+      description:  post.metadata.description,
       author:       post.metadata.author,
-      tags:         post.metadata.tags ?? [],
+      tags:         post.metadata.tags,
       created_at:   post.metadata.created_at,
       updated_at:   post.metadata.updated_at ?? post.metadata.created_at,
-      is_paid:      (post.metadata as Record<string, unknown>).is_paid ?? false,
-      unlock_price: (post.metadata as Record<string, unknown>).unlock_price ?? 0,
+      is_paid:      (post.metadata as Record<string, unknown>).is_paid as boolean | undefined,
+      unlock_price: (post.metadata as Record<string, unknown>).unlock_price as number | undefined,
       content:      post.content,
     });
-    const wr = validateWitnessFromContent(contentJson);
+    // Reconstruct witness from canonical bytes to validate header
+    const witness = new Uint8Array(6 + contentBytes.length);
+    const MAGIC = new Uint8Array([0x43, 0x4b, 0x42, 0x46, 0x53]);
+    witness.set(MAGIC, 0);
+    witness[5] = 0x00;
+    witness.set(contentBytes, 6);
+    const wr = validateWitnessHeader(witness);
     witnessValid = wr.valid;
     witnessError = wr.error;
   } catch (e) {

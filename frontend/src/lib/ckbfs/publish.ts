@@ -1,7 +1,7 @@
 import { ccc } from '@ckb-ccc/ccc';
 import { ValidatedBlogPost } from './metadata';
 import { encodeCellData } from './cell-codec';
-import { encodeWitness } from './witness';
+import { encodeWitness, toCanonicalBytes } from './witness';
 import { computePublishChecksum } from './checksum';
 import { CKBFSCellData, CKBFS_CONTENT_TYPE, CKBFS_FILENAME } from './types';
 
@@ -23,24 +23,10 @@ import { CKBFSCellData, CKBFS_CONTENT_TYPE, CKBFS_FILENAME } from './types';
  */
 export async function publishPost(signer: ccc.Signer, post: ValidatedBlogPost): Promise<string> {
   // 1. Encode content → witness bytes, compute checksum
-  // Canonical key order MUST match metadata.ts schema definition order so
-  // JSON.stringify produces a deterministic string (JS preserves insertion order).
-  // Order: title → description → author → tags → created_at → updated_at
-  //        → is_paid → unlock_price → content
-  const canonicalPost = {
-    title:        post.title,
-    description:  post.description ?? '',
-    author:       post.author,
-    tags:         post.tags ?? [],
-    created_at:   post.created_at,
-    updated_at:   post.updated_at,
-    is_paid:      post.is_paid ?? false,
-    unlock_price: post.unlock_price ?? 0,
-    content:      post.content,
-  };
-  const jsonString = JSON.stringify(canonicalPost);
-  const encoder = new TextEncoder();
-  const contentBytes = encoder.encode(jsonString);
+  // toCanonicalBytes() is the single source of truth for canonical encoding:
+  //   title → description → author → tags → created_at → updated_at
+  //   → is_paid → unlock_price → content   (UTF-8 JSON, no header)
+  const contentBytes = toCanonicalBytes(post);
   const witnessBytes = encodeWitness(contentBytes);
   const checksum = computePublishChecksum(contentBytes);
 

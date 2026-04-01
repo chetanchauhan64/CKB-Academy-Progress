@@ -1,7 +1,7 @@
 import { ccc } from '@ckb-ccc/ccc';
 import { ValidatedBlogPost } from './metadata';
 import { encodeCellData, decodeCellData } from './cell-codec';
-import { encodeWitness } from './witness';
+import { encodeWitness, toCanonicalBytes } from './witness';
 import { computeAppendChecksum } from './checksum';
 import { CKBFSCellData, BackLink } from './types';
 
@@ -44,24 +44,9 @@ export async function appendPost(
   const addressStr = await signer.getRecommendedAddress();
   const lock = await ccc.Address.fromString(addressStr, signer.client);
 
-  // 2. Prepare new content and format Witness: <CKBFS><0x00><CONTENT_BYTES>
-  // Canonical key order MUST match publish.ts / security.ts for checksum consistency.
-  // Order: title → description → author → tags → created_at → updated_at
-  //        → is_paid → unlock_price → content
-  const canonicalPost = {
-    title:        updatedPost.title,
-    description:  updatedPost.description ?? '',
-    author:       updatedPost.author,
-    tags:         updatedPost.tags ?? [],
-    created_at:   updatedPost.created_at,
-    updated_at:   updatedPost.updated_at,
-    is_paid:      updatedPost.is_paid ?? false,
-    unlock_price: updatedPost.unlock_price ?? 0,
-    content:      updatedPost.content,
-  };
-  const jsonString = JSON.stringify(canonicalPost);
-  const encoder = new TextEncoder();
-  const newContentBytes = encoder.encode(jsonString);
+  // 2. Encode content: delegate to toCanonicalBytes() — same as publish.ts.
+  //    Format Witness: <CKBFS><0x00><CONTENT_BYTES>
+  const newContentBytes = toCanonicalBytes(updatedPost);
   const newWitnessBytes = encodeWitness(newContentBytes);
 
   // 3. Chain the backlink and re-compute Adler32 Checksum

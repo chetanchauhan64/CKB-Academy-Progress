@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
 import { ValidatedBlogPost } from '@/lib/ckbfs/metadata';
 import { computePublishChecksum, computeAppendChecksum } from '@/lib/ckbfs/checksum';
+import { toCanonicalBytes } from '@/lib/ckbfs/witness';
 import { CKBFSResolvedData } from '@/lib/ckbfs/indexer';
 
 // Use marked for live preview
@@ -83,8 +84,8 @@ export default function Editor({ appendTargetTxHash, onSubmit, submitting }: Edi
   useEffect(() => {
     if (!title.trim() && !body.trim()) { setChecksumPreview(null); setWitnessBytes(0); return; }
 
-    // Canonical key order MUST match publish.ts exactly for an accurate preview
-    const post = {
+    // Use toCanonicalBytes() — identical to publish.ts — for a byte-exact preview.
+    const contentBytes = toCanonicalBytes({
       title:        title || '(Untitled)',
       description:  summary || '',
       author:       walletAddress || 'ckb1demo',
@@ -94,9 +95,7 @@ export default function Editor({ appendTargetTxHash, onSubmit, submitting }: Edi
       is_paid:      isPaid,
       unlock_price: isPaid ? (parseFloat(unlockPrice) || 10) : 0,
       content:      body,
-    };
-    const encoder = new TextEncoder();
-    const contentBytes = encoder.encode(JSON.stringify(post));
+    });
     setWitnessBytes(6 + contentBytes.length);
 
     if (appendMode && selectedPostTx) {
