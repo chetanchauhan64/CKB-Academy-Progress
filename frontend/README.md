@@ -6,6 +6,14 @@
 
 **Deployed on Vercel:** [https://ckb-academy-progress.vercel.app/](https://ckb-academy-progress.vercel.app/)
 
+----------
+## Example On-Chain Blog
+
+This blog post is stored fully on-chain using CKBFS:
+
+https://testnet.explorer.nervos.org/transaction/YOUR_TX_HASH
+
+- Decode the second witness to view readable JSON content.
 ---
 ## Dashboard
 
