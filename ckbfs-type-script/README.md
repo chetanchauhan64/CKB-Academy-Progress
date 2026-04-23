@@ -1,6 +1,6 @@
 # CKBFS — CKB File Storage System
 
-> **Week 2 Project | Nervos CKB Advanced Type Script Development**  
+> **Week 18 Project | Nervos CKB Advanced Type Script Development**  
 > An on-chain, tamper-proof file storage system built as a CKB Type Script in Rust.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -305,12 +305,12 @@ capsule deploy --env testnet
 
 | Week | Focus | Status |
 |---|---|---|
-| Week 1 | CKB fundamentals, live cell fetching, testnet transactions | ✅ Done |
-| **Week 2** | **CKBFS Type Script — on-chain validation in Rust** | **🚧 Active** |
-| Week 3 | Lumos-based TypeScript transaction builder for CKBFS | 📋 Planned |
-| Week 4 | Multi-file support, upgradeable scripts, indexing strategy | 📋 Planned |
+| Week 17 | CKB fundamentals, live cell fetching, testnet transactions | ✅ Done |
+| **Week 18** | **CKBFS Type Script — on-chain validation in Rust** | **🚧 Active** |
+| Week 19 | Lumos-based TypeScript transaction builder for CKBFS | 📋 Planned |
+| Week 20 | Multi-file support, upgradeable scripts, indexing strategy | 📋 Planned |
 
-See [`docs/week3-lumos-plan.md`](docs/week3-lumos-plan.md) for the detailed Week 3 roadmap.
+See [`docs/week19-lumos-plan.md`](docs/week19-lumos-plan.md) for the detailed Week 19 roadmap.
 
 ---
 
@@ -319,7 +319,7 @@ See [`docs/week3-lumos-plan.md`](docs/week3-lumos-plan.md) for the detailed Week
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — Deep technical design (14 sections)
 - [`docs/validation-flow.md`](docs/validation-flow.md) — Step-by-step rule enforcement
 - [`docs/transaction-lifecycle.md`](docs/transaction-lifecycle.md) — End-to-end TX flow
-- [`docs/week3-lumos-plan.md`](docs/week3-lumos-plan.md) — Week 3 SDK plan
+- [`docs/week19-lumos-plan.md`](docs/week3-lumos-plan.md) — Week 19 SDK plan
 - [Nervos CKB Docs](https://docs.nervos.org/) — Official CKB documentation
 - [ckb-std](https://github.com/nervosnetwork/ckb-std) — CKB Rust standard library
 
