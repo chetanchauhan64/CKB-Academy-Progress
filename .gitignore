@@ -1,4 +1,5 @@
-# Dependencies
+target/
+**/target/# Dependencies
 node_modules/
 .pnp
 .pnp.js
