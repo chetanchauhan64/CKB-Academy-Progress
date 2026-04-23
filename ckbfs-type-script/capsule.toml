@@ -1,0 +1,25 @@
+# capsule.toml — Capsule project configuration for CKBFS Type Script
+#
+# Capsule is the official CKB smart contract development tool. It handles:
+#   - Cross-compilation to riscv64imac-unknown-none-elf
+#   - Docker-based reproducible builds
+#   - Deployment to devnet / testnet / mainnet via RPC
+#
+# Reference: https://github.com/nervosnetwork/capsule
+
+[deployment]
+# Lock hash of the deployment lock script (default: always-success for devnet)
+lock_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
+
+[[contracts]]
+# Contract name must match the [[bin]] name in Cargo.toml
+name = "ckbfs-type-script"
+
+# Build target — CKB uses the rv64imac ISA (no floating-point, compressed instructions)
+[contracts.build]
+target = "riscv64imac-unknown-none-elf"
+
+# Docker image for reproducible builds (matches the Nervos official toolchain)
+# This ensures byte-identical binaries regardless of host Rust version.
+[contracts.build.docker]
+image = "nervos/ckb-riscv-gnu-toolchain:bionic-20210804"

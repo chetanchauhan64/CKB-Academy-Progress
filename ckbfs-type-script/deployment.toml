@@ -1,0 +1,33 @@
+# deployment.toml — CKBFS Testnet Deployment Configuration
+#
+# Used by `capsule deploy` to push the compiled binary to CKB testnet.
+# Fill in `cells[0].lock.args` with your testnet account's lock args before deploying.
+#
+# Reference: https://github.com/nervosnetwork/capsule/blob/master/docs/deployment.md
+
+[[cells]]
+# Name of the contract cell (must match Cargo.toml [[bin]] name)
+name = "ckbfs-type-script"
+
+# Enable dep_groups: allows multiple scripts to reference the same deployed cell
+# instead of duplicating the binary in each transaction.
+enable_type_id = true
+
+# The on-chain location of the contract after deployment
+# (populated automatically by `capsule deploy`)
+location = { file = "build/release/ckbfs-type-script" }
+
+[lock]
+# Secp256k1 multisig lock script (testnet) — replace args with your testnet key args
+code_hash = "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8"
+hash_type  = "type"
+# REPLACE THIS with the args of your testnet account's lock script:
+args       = "0x0000000000000000000000000000000000000000"
+
+[receivers]
+# Testnet RPC endpoint (Nervos Aggron testnet)
+api_url = "https://testnet.ckbapp.dev"
+
+[tx_fee]
+# Transaction fee in shannons (1 CKB = 1e8 shannons)
+fee_rate = 1000

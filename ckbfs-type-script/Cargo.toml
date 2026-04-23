@@ -1,0 +1,48 @@
+[package]
+name = "ckbfs-type-script"
+version = "0.1.0"
+edition = "2021"
+description = "CKB File Storage System — On-chain Type Script for validated file cells"
+
+[[bin]]
+name = "ckbfs-type-script"
+path = "src/main.rs"
+# The binary uses #![no_std] + #![no_main] and targets riscv64imac-unknown-none-elf.
+# It cannot be compiled for the native host as a test binary (no _main symbol).
+# Unit tests live in the [lib] target (src/lib.rs) and run via `cargo test --lib`.
+test = false
+
+[lib]
+name = "ckbfs_type_script"
+path = "src/lib.rs"
+
+[dependencies]
+# CKB standard library — latest stable version
+# Features:
+#   "ckb-types"     = molecule-encoded CKB types (Script, Cell, etc.)
+#   "default-alloc" = buddy allocator for heap in RISC-V VM
+ckb-std = { version = "0.17.2", default-features = false, features = [
+    "allocator",    # buddy allocator for heap (Vec, Box, etc.)
+    "ckb-types",    # molecule-encoded Script, CellOutput, etc.
+    "dummy-atomic", # required for RISC-V target (replaces std atomics)
+] }
+
+[dev-dependencies]
+# Off-chain test runner — simulates the CKB VM on your native CPU
+ckb-testtool = "0.13"
+
+[features]
+default = []
+# Enable the native simulator for off-chain testing
+native-simulator = ["ckb-std/native-simulator"]
+
+[profile.release]
+overflow-checks = true    # Required: arithmetic panics instead of wrapping
+opt-level = "z"           # Optimize aggressively for binary size
+lto = true                # Link-time optimization
+codegen-units = 1         # Single codegen unit for maximum LTO benefit
+panic = "abort"           # No unwinding runtime in the RISC-V VM
+
+[profile.dev]
+overflow-checks = true
+panic = "abort"
