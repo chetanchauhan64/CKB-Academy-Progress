@@ -1,0 +1,6 @@
+# SDK-level gitignore
+.env
+.env.local
+node_modules/
+*.log
+outputs/

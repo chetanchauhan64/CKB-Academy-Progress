@@ -1,0 +1,42 @@
+{
+  "name": "@ckbfs/sdk",
+  "version": "1.0.0",
+  "description": "Production SDK for CKB File Storage System (CKBFS) – create, update, and consume file cells on Nervos CKB Testnet",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test:unit": "node tests/01_errors.js && node tests/02_wallet.js && node tests/03_feeCalc.js && node tests/04_changeOutput.js",
+    "test:preflight": "node tests/00_preflight.js",
+    "test:live": "node tests/run_live_tests.js",
+    "test:create": "node tests/10_live_create.js",
+    "test:update": "node tests/11_live_update.js",
+    "test:consume": "node tests/12_live_consume.js",
+    "test:multichunk": "node tests/13_live_multichunk.js",
+    "deploy": "node scripts/deploy_contract.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": ["ckb", "nervos", "lumos", "type-script", "ckbfs", "blockchain"],
+  "author": "CKBFS Team",
+  "license": "MIT",
+  "dependencies": {
+    "@ckb-lumos/lumos": "0.22.2",
+    "@ckb-lumos/bi": "0.22.2",
+    "@ckb-lumos/codec": "0.22.2",
+    "@ckb-lumos/config-manager": "0.22.2",
+    "@ckb-lumos/hd": "0.22.2",
+    "@ckb-lumos/rpc": "0.22.2",
+    "@ckb-lumos/ckb-indexer": "0.22.2",
+    "@ckb-lumos/common-scripts": "0.22.2",
+    "@ckb-lumos/helpers": "0.22.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

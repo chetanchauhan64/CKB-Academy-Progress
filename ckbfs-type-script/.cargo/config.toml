@@ -1,0 +1,15 @@
+# .cargo/config.toml — CKB Contract Build Configuration
+#
+# CKB VM uses RV64IMC — NO 'A' (atomic) extension.
+# The riscv64imac target includes 'a' by default, which causes the compiler
+# to emit AMO instructions (opcode 0x2F) that the VM rejects as InvalidInstruction.
+# "-C" "target-feature=-a" explicitly disables atomic instruction generation.
+
+[target.riscv64imac-unknown-none-elf]
+linker = ".cargo/bin/ld.lld"
+rustflags = [
+    "-C", "link-arg=-T",
+    "-C", "link-arg=ckb.ld",
+    "-C", "link-arg=--gc-sections",
+    "-C", "target-feature=-a",
+]

@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-04-26T13:28:43.694Z",
+  "network": "Aggron4",
+  "binaryPath": "/Users/chetan/CKB-Academy-Progress/ckbfs-type-script/build/release/ckbfs-type-script",
+  "binarySize": 126960,
+  "codeHash": "0x605e31daf615290e8278fb593f4cdb329f8ec009ebd6e69d731cc300f55cbf63",
+  "hashType": "data1",
+  "txHash": "0x836419e39a48136f5ec664034c50c691c6b8db97f75788d2a779e0fac4b49b5a",
+  "txIndex": 0,
+  "outPoint": {
+    "txHash": "0x836419e39a48136f5ec664034c50c691c6b8db97f75788d2a779e0fac4b49b5a",
+    "index": "0x0"
+  },
+  "explorerUrl": "https://pudge.explorer.nervos.org/transaction/0x836419e39a48136f5ec664034c50c691c6b8db97f75788d2a779e0fac4b49b5a",
+  "cellCapacity": "127022 CKB",
+  "deployedBy": "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqgnnvancfdv2dzteal3uydzs4fjnz4q9hqe0zuzj"
+}

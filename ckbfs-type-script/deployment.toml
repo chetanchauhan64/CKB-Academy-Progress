@@ -22,7 +22,7 @@ location = { file = "build/release/ckbfs-type-script" }
 code_hash = "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8"
 hash_type  = "type"
 # REPLACE THIS with the args of your testnet account's lock script:
-args       = "0x0000000000000000000000000000000000000000"
+args       = "0x139b3b3c25ac5344bcf7f1e11a28553298aa02dc"
 
 [receivers]
 # Testnet RPC endpoint (Nervos Aggron testnet)
