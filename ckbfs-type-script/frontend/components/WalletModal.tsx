@@ -85,8 +85,8 @@ export default function WalletModal({ onClose }: Props) {
           msg = `UniPass: ${raw}`;
         }
       } else if (type === 'privatekey') {
-        if (raw.includes('PRIVATE_KEY')) {
-          msg = 'Add PRIVATE_KEY=0x… to frontend/.env.local and restart the dev server.';
+        if (raw.includes('PRIVATE_KEY') || raw.includes('not set')) {
+          msg = 'Private Key wallet is not configured on this server. Set PRIVATE_KEY in your environment variables and redeploy.';
         } else {
           msg = `Private Key error: ${raw}`;
         }
