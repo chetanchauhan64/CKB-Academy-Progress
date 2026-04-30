@@ -58,7 +58,7 @@ export function toLockScript(address: string) {
   };
 }
 
-export const RPC_URL   = process.env.NEXT_PUBLIC_CKB_RPC_URL    ?? 'https://testnet.ckbapp.dev';
+export const RPC_URL   = process.env.NEXT_PUBLIC_CKB_RPC_URL    ?? 'https://testnet.ckb.dev';
 export const CODE_HASH = process.env.NEXT_PUBLIC_CKBFS_CODE_HASH ?? '';
 export const TX_HASH   = process.env.NEXT_PUBLIC_CKBFS_TX_HASH   ?? '';
 export const OUT_INDEX = process.env.NEXT_PUBLIC_CKBFS_OUT_INDEX  ?? '0x0';

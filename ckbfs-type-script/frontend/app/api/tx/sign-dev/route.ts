@@ -80,7 +80,32 @@ export async function POST(req: NextRequest) {
     const witnesses    = tx.witnesses as string[];
     const newWitnesses = witnesses.map((w, i) => (i === 0 ? signedWitnessHex : w));
 
-    return NextResponse.json({ signedTx: { ...tx, witnesses: newWitnesses } });
+    // ── Build signed tx: spread original, ONLY replace witnesses ─────────────
+    const signedTx = { ...tx, witnesses: newWitnesses };
+
+    // ── Structural integrity assertion ─────────────────────────────────────────
+    // inputs, outputs, cell_deps and outputs_data must be byte-identical to the
+    // original — only witnesses are allowed to change.
+    const signedTxRecord = signedTx as Record<string, unknown>;
+    const fieldsToCheck = ['inputs', 'outputs', 'outputs_data', 'cell_deps', 'header_deps', 'version'] as const;
+    for (const field of fieldsToCheck) {
+      if (JSON.stringify(signedTxRecord[field]) !== JSON.stringify(tx[field])) {
+        console.error(`[sign-dev] INTEGRITY VIOLATION: field "${field}" changed during signing!`);
+        console.error(`  original : ${JSON.stringify(tx[field])}`);
+        console.error(`  signedTx : ${JSON.stringify(signedTxRecord[field])}`);
+        return NextResponse.json(
+          { error: `Signing integrity violation: field "${field}" was mutated. This is a bug — do not broadcast.` },
+          { status: 500 }
+        );
+      }
+    }
+
+    console.log('[sign-dev] Integrity OK ✓ — inputs:', (tx.inputs as unknown[]).length,
+      '| outputs:', (tx.outputs as unknown[]).length,
+      '| witnesses:', newWitnesses.length,
+      '| witness[0] signed:', newWitnesses[0] !== '0x');
+
+    return NextResponse.json({ signedTx });
   } catch (err: unknown) {
     console.error('[sign-dev]', err);
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });

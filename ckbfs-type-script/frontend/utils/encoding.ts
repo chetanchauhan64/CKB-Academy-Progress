@@ -61,7 +61,22 @@ export function sha256Sync(data: Uint8Array): Uint8Array {
 // ─── Cell data ────────────────────────────────────────────────────────────────
 
 const CURRENT_VERSION = 1;
-const HEADER_SIZE = 10; // version(1) + flags(1) + chunkIndex(4) + totalChunks(4)
+/**
+ * Full binary layout (42-byte header + variable content):
+ *   [0]       version      (u8)       = 0x01
+ *   [1]       flags        (u8)       bit-0=immutable, bit-1=finalized
+ *   [2..5]    chunk_index  (u32 LE)
+ *   [6..9]    total_chunks (u32 LE)
+ *   [10..41]  sha256_hash  (32 bytes) = SHA-256(content)
+ *   [42..]    content      (bytes)
+ *
+ * This matches the Rust cell_data.rs layout exactly.
+ */
+const HEADER_SIZE = 42;
+
+// Flag constants matching Rust cell_data.rs
+export const FLAG_IMMUTABLE = 0x01; // bit-0: cannot be updated
+export const FLAG_FINALIZED = 0x02; // bit-1: all chunks present on-chain
 
 export function encodeCellData(params: {
   version?: number;
@@ -71,43 +86,59 @@ export function encodeCellData(params: {
   content: Uint8Array;
 }): Uint8Array {
   const { version = CURRENT_VERSION, flags = 0, chunkIndex, totalChunks, content } = params;
+
+  // Compute SHA-256(content) — required by the on-chain Rust validator (rule C4)
+  const contentHash = sha256Sync(content);
+
   const header = new Uint8Array(HEADER_SIZE);
   const view = new DataView(header.buffer);
   header[0] = version;
   header[1] = flags;
-  view.setUint32(2, chunkIndex, true);
-  view.setUint32(6, totalChunks, true);
+  view.setUint32(2, chunkIndex, true);   // chunk_index LE
+  view.setUint32(6, totalChunks, true);  // total_chunks LE
+  header.set(contentHash, 10);           // sha256_hash [10..41]
   return concatBytes(header, content);
 }
 
 export function decodeCellData(data: string | Uint8Array): DecodedCellData {
   const bytes = typeof data === 'string' ? hexToBytes(data) : data;
-  if (bytes.length < HEADER_SIZE) throw new Error('Cell data too short');
+  if (bytes.length < HEADER_SIZE) throw new Error('Cell data too short (need >= 42 bytes)');
   const view = new DataView(bytes.buffer, bytes.byteOffset);
-  const version = bytes[0];
-  const flags = bytes[1];
-  const chunkIndex = view.getUint32(2, true);
+  const version     = bytes[0];
+  const flags       = bytes[1];
+  const chunkIndex  = view.getUint32(2, true);
   const totalChunks = view.getUint32(6, true);
-  const content = bytes.slice(HEADER_SIZE);
-  const isFinalized = (flags & 1) !== 0;
+  // sha256_hash at [10..41] — not returned in DecodedCellData but verified by Rust
+  const content     = bytes.slice(HEADER_SIZE);
+  const isFinalized = (flags & FLAG_FINALIZED) !== 0;
   return { version, flags, chunkIndex, totalChunks, content, isFinalized };
 }
 
 // ─── Type args ────────────────────────────────────────────────────────────────
 
-export function encodeTypeArgs(fileId: string, ownerLockHash: string): Uint8Array {
-  const fid = hexToBytes(fileId.startsWith('0x') ? fileId.slice(2) : fileId);
+/**
+ * Encodes type script args as 64 bytes:
+ *   [0..31]  owner_lock_hash  (32 bytes) — must match Rust parse_args [0..32]
+ *   [32..63] file_id          (32 bytes) — must match Rust parse_args [32..64]
+ *
+ * IMPORTANT: Rust parse_args order is (owner_lock_hash, file_id).
+ * This matches the on-chain Rust cell_data.rs parse_args implementation.
+ */
+export function encodeTypeArgs(ownerLockHash: string, fileId: string): Uint8Array {
   const olh = hexToBytes(ownerLockHash.startsWith('0x') ? ownerLockHash.slice(2) : ownerLockHash);
-  if (fid.length !== 32) throw new Error('fileId must be 32 bytes');
+  const fid = hexToBytes(fileId.startsWith('0x') ? fileId.slice(2) : fileId);
   if (olh.length !== 32) throw new Error('ownerLockHash must be 32 bytes');
-  return concatBytes(fid, olh);
+  if (fid.length !== 32) throw new Error('fileId must be 32 bytes');
+  // Rust order: [owner_lock_hash][file_id]
+  return concatBytes(olh, fid);
 }
 
 export function decodeTypeArgs(args: string): TypeArgs {
   const bytes = hexToBytes(args.startsWith('0x') ? args.slice(2) : args);
   if (bytes.length < 64) throw new Error('Type args too short');
-  const fileId = '0x' + Array.from(bytes.slice(0, 32)).map(b => b.toString(16).padStart(2, '0')).join('');
-  const ownerLockHash = '0x' + Array.from(bytes.slice(32, 64)).map(b => b.toString(16).padStart(2, '0')).join('');
+  // Rust order: [0..32] = owner_lock_hash, [32..64] = file_id
+  const ownerLockHash = '0x' + Array.from(bytes.slice(0, 32)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const fileId = '0x' + Array.from(bytes.slice(32, 64)).map(b => b.toString(16).padStart(2, '0')).join('');
   return { fileId, ownerLockHash };
 }
 

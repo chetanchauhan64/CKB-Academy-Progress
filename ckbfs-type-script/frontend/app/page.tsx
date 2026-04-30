@@ -44,29 +44,34 @@ export default function Home() {
       <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
         {/* ── HEADER ──────────────────────────────────────────────────────── */}
-        <header style={{
+        <header className="wallet-header" style={{
           position: 'sticky', top: 0, zIndex: 100,
           padding: '0 28px', height: 62,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 8,
           background: 'rgba(8,12,20,0.8)',
           backdropFilter: 'blur(24px)',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0, minWidth: 0 }}>
             <div style={{
               width: 36, height: 36, borderRadius: 11,
               background: 'linear-gradient(135deg,#9333ea,#0891b2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 900, fontSize: 13, color: 'white', letterSpacing: -1,
               boxShadow: '0 4px 16px rgba(147,51,234,0.4)',
+              flexShrink: 0,
             }}>FS</div>
             <span className="gradient-text" style={{ fontSize: 20, fontWeight: 900, letterSpacing: -1 }}>CKBFS</span>
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)', padding: '3px 10px', borderRadius: 20 }}>
-              Aggron4
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)', padding: '3px 10px', borderRadius: 20, flexShrink: 0 }}>
+              Pudge Testnet
             </span>
           </div>
-          <WalletConnect />
+          {/* Wallet — flex-shrink:0 so it never gets hidden */}
+          <div className="wallet-right" style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+            <WalletConnect />
+          </div>
         </header>
 
         {/* ── HERO (no wallet) ─────────────────────────────────────────────── */}
@@ -164,7 +169,7 @@ export default function Home() {
               <div style={{ marginTop: 'auto', padding: '14px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 <p style={{ fontSize: 11, color: 'var(--on-muted)', lineHeight: 1.5 }}>
                   CKBFS Type Script<br />
-                  <span style={{ color: 'rgba(74,222,128,0.6)' }}>● Aggron4 Testnet</span>
+                  <span style={{ color: 'rgba(74,222,128,0.6)' }}>● Pudge Testnet</span>
                 </p>
               </div>
             </aside>
@@ -184,7 +189,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '16px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
-          <span style={{ fontSize: 12, color: 'var(--on-muted)' }}>CKBFS · Aggron4 Testnet · Built with ❤️ on Nervos</span>
+          <span style={{ fontSize: 12, color: 'var(--on-muted)' }}>CKBFS · Pudge Testnet · Built with ❤️ on Nervos</span>
           <a href="https://github.com/nervosnetwork" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--on-variant)', textDecoration: 'none' }}>Nervos Network ↗</a>
         </footer>
       </div>

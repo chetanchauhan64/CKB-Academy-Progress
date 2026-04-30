@@ -3,9 +3,9 @@
  * components/TxStatus.tsx — Full 4-state transaction feedback
  * States: building → signing → broadcasting → success | error
  */
+import React, { useState } from 'react';
 import { explorerTxUrl } from '@/utils/format';
 import type { OperationState } from '@/types';
-import { useState } from 'react';
 
 const STEP_LABELS: Record<string, string> = {
   building:     'Building transaction…',
@@ -71,10 +71,10 @@ export default function TxStatus({ state, statusMsg, onReset, compact = false }:
             const steps = ['building','signing','broadcasting'];
             const cur   = steps.indexOf(state.status);
             return (
-              <>
-                <div key={s} className={`step-dot ${i < cur ? 'done' : i === cur ? 'active' : ''}`} />
-                {i < 2 && <div key={`l${i}`} className={`step-line ${i < cur ? 'done' : ''}`} />}
-              </>
+              <React.Fragment key={`step-${s}`}>
+                <div className={`step-dot ${i < cur ? 'done' : i === cur ? 'active' : ''}`} />
+                {i < 2 && <div key={`step-line-${i}`} className={`step-line ${i < cur ? 'done' : ''}`} />}
+              </React.Fragment>
             );
           })}
         </div>

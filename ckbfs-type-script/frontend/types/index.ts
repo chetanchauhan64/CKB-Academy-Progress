@@ -90,6 +90,12 @@ export interface BuildTxResponse {
   fileId: string;
   chunkCount: number;
   capacityNeeded: string;
+  /** Week 20: human-readable name of the uploaded file */
+  fileName?: string;
+  /** Week 20: MIME type detected client-side */
+  mimeType?: string;
+  /** Week 20: script version tag stored in cell metadata */
+  scriptVersion?: string;
 }
 
 export interface BroadcastRequest {
@@ -111,9 +117,26 @@ export interface OperationState {
 }
 
 export interface FileEntry {
-  fileId: string;
-  chunkCount: number;
-  totalSize: number;
-  isComplete: boolean;
-  outPoints: OutPoint[];
+  fileId        : string;
+  chunks        : number;
+  totalSize     : number;
+  totalCapacity : string;
+  outPoints     : OutPoint[];
+  // Week 20 metadata (populated from client-side store, may be absent for old files)
+  fileName      ?: string;
+  mimeType      ?: string;
+  scriptVersion ?: string;
+  txHash        ?: string;
+  uploadedAt    ?: number; // unix ms
+}
+
+/** Week 20 — Client-side file metadata persisted in localStorage */
+export interface FileMetadata {
+  fileId        : string;
+  fileName      : string;
+  mimeType      : string;
+  scriptVersion : string;   // e.g. 'v1'
+  txHash        : string;
+  chunkOutpoints: OutPoint[]; // known at upload time — used for RPC-first reads
+  uploadedAt    : number;     // Date.now() at upload
 }

@@ -1,172 +1,260 @@
-# CKBFS — CKB File Storage System
+# CKBFS — Decentralized File Storage on Nervos CKB
 
-> **Week 18 Project | Nervos CKB Advanced Type Script Development**  
-> An on-chain, tamper-proof file storage system built as a CKB Type Script in Rust.
+> Store any file permanently on the Nervos CKB blockchain using a UTXO-based chunk model.
+> Production-ready dApp with multi-wallet support, RPC-first validation, and retry resilience.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Rust](https://img.shields.io/badge/Rust-no__std%20%7C%20RISC--V-orange)](https://www.rust-lang.org/)
-[![Network](https://img.shields.io/badge/Network-Nervos%20CKB%20Testnet-green)](https://explorer.nervos.org/aggron)
-[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](.github/workflows/ci.yml)
-[![Week](https://img.shields.io/badge/Progress-Week%202%20of%204-yellow)](./)
+[![Testnet](https://img.shields.io/badge/network-Pudge%20Testnet-brightgreen)](https://pudge.explorer.nervos.org)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org)
+[![JoyID](https://img.shields.io/badge/wallet-JoyID-purple)](https://joy.id)
 
 ---
 
-## What is CKBFS?
+## Description
 
-CKBFS is a **production-grade on-chain file storage system** built on Nervos CKB. It uses CKB's **Type Script** mechanism to enforce strict validation rules directly on-chain — no off-chain trust, no centralized authority.
+**CKBFS** (CKB File Storage System) is a decentralized file storage protocol built on [Nervos CKB](https://nervos.org). Files are split into chunks, each stored as a cell on-chain with a custom Type Script validator. The system supports full file lifecycle management — upload, update, consume (reclaim CKB) — and reconstructs file content directly from live cells.
 
-Every file stored in CKBFS exists as one or more **cells** on the CKB blockchain. The Type Script compiled into the cell's script field acts as the **guardian** of that data — any transaction that creates, modifies, or destroys a CKBFS cell must satisfy all validation rules enforced by the RISC-V binary running inside the CKB VM.
+Built as a production-grade Week 20 project for the CKB Academy, demonstrating advanced on-chain storage patterns, RPC-first validation, and multi-wallet integration.
 
-### Why This Is Advanced
+---
 
-| Capability | Why It Matters |
+## Features
+
+| Feature | Details |
 |---|---|
-| **On-Chain Validation** | Integrity checks run inside the CKB VM — not on your server |
-| **Type Script Logic** | Custom state machine governing every cell lifecycle transition |
-| **Multi-Cell Atomicity** | All file chunks in one transaction are validated as a group |
-| **State Transition Enforcement** | Immutable cells, chunk reordering prevention, owner-gated destruction |
-| **No Trusted Oracle** | SHA-256 of file content is verified on-chain — tampering is impossible |
-| **Pure Rust SHA-256** | No `std`, no external hash crates — verified against NIST FIPS 180-4 vectors |
+| **Multi-file support** | Unique `fileId` per file; all files per wallet tracked independently |
+| **Chunk-based storage** | Large files split into ≤32 KB chunks, each stored as a separate CKB cell |
+| **Full file lifecycle** | Upload → Update → Consume (reclaim CKB capacity) |
+| **RPC-first validation** | `get_live_cell` is the sole truth for cell liveness — never blocked by indexer lag |
+| **Retry + jitter** | Progressive backoff (2s + 500ms/attempt) with 0–500ms random jitter to avoid retry storms |
+| **Hybrid indexing** | Indexer for discovery, RPC for liveness/confirmation — eventual consistency handled gracefully |
+| **File viewer** | On-chain file reconstruction and display in-browser |
+| **Upgradeable script** | `SCRIPT_VERSION` constant + dep_group toggle for zero-downtime upgrades |
+| **JoyID wallet** | Biometric passkey signing via popup — no seed phrase, no extension |
+| **Private key** | Server-side signing for development/CI |
 
 ---
 
 ## Architecture
 
-### Cell Data Layout (42-byte header)
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         CKBFS dApp                              │
+│                                                                 │
+│  Browser (Next.js 14)                                           │
+│  ┌─────────────┐    ┌──────────────┐    ┌───────────────────┐  │
+│  │  FileUpload │───▶│  useCkbfs    │───▶│  WalletAdapter    │  │
+│  │  Dashboard  │    │  (hook)      │    │  JoyID / PrivKey  │  │
+│  │  FileViewer │◀───│  pollTxCommit│    └────────┬──────────┘  │
+│  └─────────────┘    └──────┬───────┘             │ signTx      │
+│                             │ build/broadcast      ▼            │
+│                    ┌────────▼──────────────────────────────┐   │
+│                    │       Next.js API Routes               │   │
+│                    │  /api/tx/create   /api/tx/update       │   │
+│                    │  /api/tx/consume  /api/tx/broadcast    │   │
+│                    └────────┬──────────────────────────────┘   │
+└─────────────────────────────│───────────────────────────────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              ▼                ▼                ▼
+     ┌─────────────┐  ┌──────────────┐  ┌──────────────┐
+     │  CKB Indexer│  │  CKB RPC     │  │  CKB Network │
+     │  (discovery)│  │  (liveness)  │  │  (consensus) │
+     │  get_cells  │  │ get_live_cell│  │   Pudge/     │
+     │  eventual   │  │ get_tx       │  │   Aggron4    │
+     │  consistency│  │ send_tx      │  │              │
+     └─────────────┘  └──────────────┘  └──────────────┘
+```
+
+### Transaction Flow
+
+1. **Client** selects file → React hook (`useCkbfs`) calls `/api/tx/create`
+2. **Server** (`txBuilder.ts`) fetches live cells from Indexer, validates each via `get_live_cell` RPC
+3. **Server** builds raw unsigned CKB transaction (correct cell deps, witness placeholders)
+4. **Client** passes raw tx to wallet adapter → JoyID popup signs → returns signed tx
+5. **Client** sends `{ rawTx, signedTx }` to `/api/tx/broadcast` for integrity check + broadcast
+6. **Client** polls `get_transaction` until `status: committed` → updates UI
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend framework** | Next.js 14 (App Router) |
+| **Language** | TypeScript 5 |
+| **Blockchain** | Nervos CKB — Pudge Testnet (Aggron4) |
+| **CKB SDK** | `@ckb-lumos/lumos` — address parsing, script hashing |
+| **JoyID SDK** | `@joyid/ckb` v1.1.4 — biometric wallet popup signing |
+| **On-chain script** | Rust Type Script (custom CKBFS validator) |
+| **Encoding** | 42-byte binary header with SHA-256 file hash |
+| **Styling** | Vanilla CSS — glassmorphism dark design system |
+
+---
+
+## How It Works
+
+### File → Chunks → Cells
 
 ```
- Byte  0     1     2–5          6–9          10–41        42–N
-      ┌─────┬─────┬────────────┬────────────┬────────────┬──────────┐
-      │ ver │flgs │chunk_index │total_chunks│ sha256[32] │ content  │
-      │ 1B  │ 1B  │  4B (LE)  │  4B (LE)  │   32B      │variable  │
-      └─────┴─────┴────────────┴────────────┴────────────┴──────────┘
+File (any size)
+  │
+  ▼
+splitIntoChunks(32KB each)
+  │
+  ▼
+encodeCellData(chunk, metadata)  ← 42-byte header + content
+  ├─ bytes [0..3]   flags (0x01=partial, 0x02=final)
+  ├─ bytes [4..5]   chunk index (u16 LE)
+  ├─ bytes [6..7]   total chunks (u16 LE)
+  ├─ bytes [8..9]   reserved
+  ├─ bytes [10..41] SHA-256 hash of full file content
+  └─ bytes [42..]   raw chunk content
+  │
+  ▼
+CKB Cell per chunk
+  ├─ lock:  owner's address lock script
+  ├─ type:  CKBFS type script { code_hash, hash_type, args: [owner_lock_hash][file_id] }
+  └─ data:  encoded chunk bytes
 ```
 
-| Field | Size | Description |
+### RPC-First Validation
+
+The indexer is used **only for discovery** (`get_cells`). Before including any cell in a transaction, the server calls `get_live_cell` on the primary RPC:
+
+```
+status === 'live'  → ✅ safe to use as input
+status === 'dead'  → ❌ already spent, skip
+status === 'unknown' → ❌ not yet propagated, skip
+```
+
+This eliminates false-positive "Unknown OutPoint" errors caused by indexer lag.
+
+### Retry Logic
+
+```
+for attempt 1..10:
+  cells = selectInputCells()          ← RPC-validated
+  if cells found → build tx → break
+  
+  baseDelay = 2000 + attempt * 500    ← progressive (2.0s → 6.5s)
+  jitter    = random(0, 500)          ← prevents retry storms
+  sleep(baseDelay + jitter)
+```
+
+### Metadata Indexing
+
+Each file's metadata (name, size, chunks, txHash) is stored in `localStorage` immediately after upload. This decouples the UI from indexer sync delays — the file list is always up-to-date even before the indexer has processed the transaction.
+
+### JoyID Wallet Format Conversion
+
+JoyID's `signRawTransaction` expects **camelCase CKBTransaction** format. Our server builds snake_case RPC format. The adapter performs a full bidirectional conversion:
+
+```
+CKB RPC (snake_case)    →  JoyID (camelCase)
+────────────────────────────────────────────
+cell_deps               →  cellDeps
+out_point.tx_hash       →  outPoint.txHash
+dep_type: 'dep_group'   →  depType: 'depGroup'
+previous_output         →  previousOutput
+outputs_data            →  outputsData
+code_hash / hash_type   →  codeHash / hashType
+```
+
+After signing, the result is converted back before broadcast.
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js 18+
+- A JoyID account (testnet) OR a CKB testnet private key
+- CKB testnet balance ([Faucet](https://faucet.nervos.org/))
+
+### Install
+
+```bash
+cd ckbfs-type-script/frontend
+npm install
+```
+
+### Environment Variables
+
+Create `frontend/.env.local`:
+
+```env
+# CKB Testnet RPC (primary node — also serves as indexer)
+NEXT_PUBLIC_CKB_RPC_URL=https://testnet.ckb.dev
+NEXT_PUBLIC_INDEXER_URL=https://testnet.ckb.dev
+
+# CKBFS Type Script deployment (Pudge testnet)
+NEXT_PUBLIC_CKBFS_CODE_HASH=<your_deployed_script_code_hash>
+NEXT_PUBLIC_CKBFS_TX_HASH=<deployment_tx_hash>
+NEXT_PUBLIC_CKBFS_OUT_INDEX=0x0
+
+# JoyID testnet app URL
+NEXT_PUBLIC_JOYID_URL=https://testnet.joyid.dev
+
+# (Optional) Dev-only private key signing
+PRIVATE_KEY=<0x_prefixed_private_key>
+
+# (Optional) dep_group upgrade support
+NEXT_PUBLIC_CKBFS_USE_DEP_GROUP=false
+```
+
+### Run
+
+```bash
+npm run dev
+```
+
+App runs at **http://localhost:3000**
+
+### Build
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## Deployment
+
+Deployed via **Vercel** as a subfolder project:
+
+1. Set root directory to `ckbfs-type-script/frontend` in Vercel settings
+2. Add all `.env.local` variables as Vercel Environment Variables
+3. Vercel auto-detects Next.js and deploys with zero config
+
+---
+
+## Wallet Support
+
+| Wallet | Type | How it signs |
 |---|---|---|
-| `version` | 1 byte | Schema version — must be `0x01` |
-| `flags` | 1 byte | Bit 0 = IMMUTABLE, Bit 1 = FINALIZED |
-| `chunk_index` | 4 bytes LE | Zero-based chunk number within file |
-| `total_chunks` | 4 bytes LE | Total number of chunks |
-| `sha256_hash` | 32 bytes | SHA-256 of content payload |
-| `content` | variable | Raw file bytes |
-
-### Type Script Args (64 bytes)
-
-```
-[owner_lock_hash: 32 bytes][file_id: 32 bytes]
-```
-
-| Field | Description |
-|---|---|
-| `owner_lock_hash` | Blake2b hash of the owner's Lock Script — gates destruction |
-| `file_id` | Arbitrary 32-byte file identifier — immutable after creation |
+| **JoyID** | Recommended | Biometric passkey via popup (`signRawTransaction`) |
+| **UniPass** | Email | Enter your testnet `ckt1…` address (demo/read mode) |
+| **Private Key** | Dev only | Server-side signing via `PRIVATE_KEY` env var |
 
 ---
 
-## Execution Modes
+## Key Technical Insights
 
-The Type Script detects its mode from the transaction structure:
+### 1. RPC vs Indexer
+> The CKB Indexer is eventually consistent. Transactions that were just broadcast may not appear in indexer results for several seconds. **CKBFS uses `get_live_cell` from the primary RPC as the sole source of truth for cell liveness** — the indexer is only used for initial discovery.
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  Mode         │ Input group │ Output group │ Description         │
-├──────────────────────────────────────────────────────────────────┤
-│  CREATION     │    empty    │   has cells  │ Upload new file     │
-│  UPDATE       │  has cells  │   has cells  │ Overwrite content   │
-│  DESTRUCTION  │  has cells  │    empty     │ Delete file (owner) │
-└──────────────────────────────────────────────────────────────────┘
-```
+### 2. Correct JoyID Cell Dep (Pudge Testnet)
+> The `@joyid/ckb` SDK's `getJoyIDCellDep(false)` returns an **outdated/spent** tx on Pudge. The correct live dep group (confirmed by querying actual JoyID-signed transactions on Aggron4) is:
+> `0x636a786001f87cb615acfcf408be0f9a1f077001f0bbc75ca54eadfe7e221713 : 0x0`
 
----
+### 3. Molecule Witness Placeholder
+> JoyID's `signRawTransaction` parses witnesses using the molecule codec. A bare `0x` witness (0 bytes) crashes with "Invalid buffer length: 0, should be 4". Witnesses must be pre-filled with a valid empty `WitnessArgs` molecule: `0x10000000100000001000000010000000` (16 bytes).
 
-## On-Chain Validation Rules
-
-### Creation (C1–C6)
-
-| Rule | Description |
-|---|---|
-| C1 | Data ≥ 42 bytes |
-| C2 | Version == `0x01` |
-| C3 | `chunk_index` < `total_chunks` |
-| C4 | SHA-256(content) == embedded hash |
-| C5 | No duplicate `chunk_index` in the group |
-| C6 | If FINALIZED flag set → chunks must be contiguous `[0, N)` |
-
-### Update (U1–U8)
-
-| Rule | Description |
-|---|---|
-| U1 | All creation rules apply to outputs |
-| U2 | Inputs and outputs are paired by `chunk_index` |
-| U3 | `chunk_index` cannot change |
-| U4 | `total_chunks` cannot change |
-| U5 | `version` cannot change |
-| U6 | `owner_lock_hash` cannot change (no ownership transfer) |
-| U7 | `file_id` cannot change |
-| U8 | If input has IMMUTABLE flag → **REJECT** |
-
-### Destruction (D1)
-
-| Rule | Description |
-|---|---|
-| D1 | At least one input's lock_hash == `owner_lock_hash` from args |
-
----
-
-## How Transaction Validation Works End-to-End
-
-```
-User submits TX
-      │
-      ▼
-CKB Node receives TX
-      │
-      ▼
-Lock Script validation (inputs)
-  → Owner's signature verified here
-      │
-      ▼
-Type Script validation (CKBFS script — runs once per group)
-  │
-  ├── load_script() → read args (owner_lock_hash, file_id)
-  │
-  ├── collect GroupInput cell data
-  ├── collect GroupOutput cell data
-  │
-  ├── Detect mode (CREATION / UPDATE / DESTRUCTION)
-  │
-  ├── CREATION → validate each output:
-  │     parse() → verify_hash() → check duplicates → check contiguity
-  │
-  ├── UPDATE → pair input↔output by chunk_index:
-  │     verify hashes, check immutability, verify field invariants
-  │
-  └── DESTRUCTION → scan all inputs:
-        any lock_hash == owner_lock_hash? → ALLOW : REJECT
-      │
-      ▼
-Exit 0 → TX accepted by all nodes
-Exit ≠ 0 → TX rejected globally
-```
-
-### How Off-Chain and On-Chain Interact
-
-```
-Off-chain (Lumos / TypeScript)          On-chain (RISC-V / Rust)
-──────────────────────────────          ────────────────────────
-1. Build cell data bytes                5. CKB VM loads binary
-   [ver][flags][idx][total]                from cell dep
-   [sha256][content]
-                                        6. Script reads group
-2. Set Type Script args                    inputs/outputs via
-   [owner_lock_hash][file_id]              syscalls (GroupInput,
-                                           GroupOutput)
-3. Sign with owner's key
-   (lock script witness)                7. parse() → verify_hash()
-                                           → mode rules → exit 0
-4. Submit TX to RPC
-```
+### 4. Cell Dep Selection by Wallet Type
+> The transaction's `cell_deps` must include the lock script of the signing wallet. For secp256k1 wallets, use `0xf8de3bb4...` (Aggron4 genesis dep). For JoyID wallets, use `0x636a7860...`. The builder auto-detects by comparing `lockScript.codeHash`.
 
 ---
 
@@ -174,157 +262,46 @@ Off-chain (Lumos / TypeScript)          On-chain (RISC-V / Rust)
 
 ```
 ckbfs-type-script/
+├── src/                        # Rust on-chain Type Script
+│   ├── entry.rs                # Main entry point + state machine
+│   ├── cell_data.rs            # 42-byte binary cell data layout
+│   ├── error.rs                # On-chain error codes
+│   └── hash.rs                 # Blake2b hash utilities
 │
-├── 📄 Cargo.toml                    # Package manifest
-├── 📄 capsule.toml                  # Capsule RISC-V build config
-├── 📄 deployment.toml               # Testnet deployment config
-├── 📄 README.md                     # This file
-├── 📄 ARCHITECTURE.md               # 14-section deep technical design
-├── 📄 CHANGELOG.md                  # Version history (Keep a Changelog)
-├── 📄 LICENSE                       # MIT License
-│
-├── 📁 src/                          # On-chain Type Script (RISC-V Rust)
-│   ├── main.rs                      # CKB binary entry point (no_std)
-│   ├── lib.rs                       # Library root (for off-chain tests)
-│   ├── entry.rs                     # ⭐ Core validation logic (3 modes)
-│   ├── error.rs                     # Error enum → negative i8 exit codes
-│   ├── cell_data.rs                 # Binary parser + SHA-256 verifier
-│   └── hash.rs                      # Pure Rust SHA-256 (FIPS 180-4)
-│
-├── 📁 tests/src/                    # Off-chain simulation tests
-│   ├── lib.rs
-│   └── ckbfs_tests.rs               # 8 simulation test cases
-│
-├── 📁 prompts/                      # AI prompts used to build this project
-│   ├── 01_initial_idea_prompt.md    # Concept generation session
-│   ├── 02_upgrade_prompt.md         # Validation rule design session
-│   └── 03_structure_prompt.md       # Full structure generation session
-│
-├── 📁 outputs/                      # Exported source artifacts (review copy)
-│   ├── entry.rs
-│   ├── error.rs
-│   ├── cell_data.rs
-│   ├── hash.rs
-│   └── main.rs
-│
-├── 📁 docs/                         # Extended documentation
-│   ├── validation-flow.md           # Step-by-step rule enforcement guide
-│   ├── transaction-lifecycle.md     # End-to-end TX flow (Lumos → VM)
-│   └── week3-lumos-plan.md          # Week 3 TypeScript SDK roadmap
-│
-└── 📁 .github/
-    └── workflows/
-        └── ci.yml                   # 4-job CI pipeline (lint, build, test, audit)
+└── frontend/                   # Next.js dApp
+    ├── app/
+    │   ├── api/tx/             # Server-side tx builder API routes
+    │   │   ├── create/         # Build CREATE transaction
+    │   │   ├── update/         # Build UPDATE transaction
+    │   │   ├── consume/        # Build CONSUME transaction
+    │   │   ├── broadcast/      # Integrity check + RPC broadcast
+    │   │   └── status/         # Transaction confirmation polling
+    │   ├── globals.css         # Design system (glassmorphism dark)
+    │   └── page.tsx            # Main SPA shell
+    ├── components/
+    │   ├── FileUpload.tsx       # Drag-drop upload with chunk preview
+    │   ├── Dashboard.tsx        # File grid + stats
+    │   ├── FileCard.tsx         # Per-file card with lifecycle actions
+    │   ├── WalletModal.tsx      # Wallet selection modal
+    │   └── TxStatus.tsx         # Toast-based tx state display
+    ├── hooks/
+    │   └── useCkbfs.ts          # Core tx lifecycle hook
+    ├── services/
+    │   ├── txBuilder.ts         # Cell selection, tx construction
+    │   └── indexer.ts           # Indexer + RPC wrappers
+    ├── wallets/
+    │   ├── JoyIDAdapter.ts      # JoyID popup signing + format conversion
+    │   └── PrivateKeyAdapter.ts # Dev server-side signing
+    └── utils/
+        └── encoding.ts          # Cell data binary encoding/decoding
 ```
-
----
-
-## Build & Run
-
-### Prerequisites
-
-```bash
-# Rust with RISC-V target
-rustup target add riscv64imac-unknown-none-elf
-
-# Optional: Capsule for deployment
-cargo install ckb-capsule
-```
-
-### Build
-
-```bash
-# Fast type-check (no binary produced)
-cargo check --target riscv64imac-unknown-none-elf
-
-# Debug build
-cargo build --target riscv64imac-unknown-none-elf
-
-# Release build (optimized for deployment — size + LTO)
-cargo build --release --target riscv64imac-unknown-none-elf
-```
-
-### Test
-
-```bash
-# Unit tests: hash.rs + cell_data.rs (runs on native CPU, no RISC-V required)
-cargo test --lib
-
-# Off-chain simulation: full TX flow via ckb-testtool
-# Requires debug binary to be built first (see above)
-cargo test --features native-simulator
-```
-
-### Deploy (Testnet)
-
-```bash
-# Build release binary
-cargo build --release --target riscv64imac-unknown-none-elf
-
-# Deploy via Capsule (requires deployment.toml configured with your key)
-capsule deploy --env testnet
-```
-
----
-
-## Error Code Reference
-
-| Exit Code | Name | Trigger |
-|---|---|---|
-| `-10` | `DataTooShort` | `data.len() < 42` |
-| `-11` | `UnsupportedVersion` | `version ≠ 0x01` |
-| `-12` | `InvalidChunkIndex` | `chunk_index ≥ total_chunks` |
-| `-13` | `ZeroTotalChunks` | `total_chunks == 0` |
-| `-20` | `InvalidArgsLength` | `args ≠ 64 bytes` |
-| `-30` | `HashMismatch` | `SHA-256(content) ≠ stored hash` |
-| `-42` | `ChunkIndexChanged` | chunk reindexed during update |
-| `-43` | `TotalChunksChanged` | `total_chunks` changed |
-| `-44` | `ImmutableCell` | update attempted on IMMUTABLE cell |
-| `-50` | `UnauthorizedDestruction` | owner lock not in inputs |
-| `-60` | `DuplicateChunkIndex` | two cells share same `chunk_index` |
-| `-61` | `NonContiguousChunks` | finalized file has chunk gaps |
-
----
-
-## Code Statistics
-
-| Module | Lines | Purpose |
-|---|---|---|
-| `entry.rs` | 294 | Core validation engine |
-| `cell_data.rs` | 300 | Binary parser + 9 unit tests |
-| `hash.rs` | 186 | SHA-256 + NIST test vectors |
-| `error.rs` | 100 | Error codes + From impls |
-| `main.rs` | 42 | Binary entry + allocator |
-| `lib.rs` | 25 | Library root |
-| `tests/ckbfs_tests.rs` | 368 | 8 simulation tests |
-| **Total** | **1,315** | |
-
----
-
-## Roadmap
-
-| Week | Focus | Status |
-|---|---|---|
-| Week 17 | CKB fundamentals, live cell fetching, testnet transactions | ✅ Done |
-| **Week 18** | **CKBFS Type Script — on-chain validation in Rust** | **🚧 Active** |
-| Week 19 | Lumos-based TypeScript transaction builder for CKBFS | 📋 Planned |
-| Week 20 | Multi-file support, upgradeable scripts, indexing strategy | 📋 Planned |
-
-See [`docs/week19-lumos-plan.md`](docs/week19-lumos-plan.md) for the detailed Week 19 roadmap.
-
----
-
-## Further Reading
-
-- [`ARCHITECTURE.md`](ARCHITECTURE.md) — Deep technical design (14 sections)
-- [`docs/validation-flow.md`](docs/validation-flow.md) — Step-by-step rule enforcement
-- [`docs/transaction-lifecycle.md`](docs/transaction-lifecycle.md) — End-to-end TX flow
-- [`docs/week19-lumos-plan.md`](docs/week3-lumos-plan.md) — Week 19 SDK plan
-- [Nervos CKB Docs](https://docs.nervos.org/) — Official CKB documentation
-- [ckb-std](https://github.com/nervosnetwork/ckb-std) — CKB Rust standard library
 
 ---
 
 ## License
 
-MIT © 2026
+MIT — built for educational purposes as part of the CKB Academy Week 20 project.
+
+---
+
+*Built with ❤️ on Nervos CKB Pudge Testnet*

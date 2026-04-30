@@ -8,6 +8,7 @@
  * • Shows per-option inline error on failure — NEVER closes on failure
  * • Closes only on successful connect
  * • No silent failures — every error is visible to the user
+ * • All options are always clickable — errors surface inline, nothing is disabled
  */
 
 import { useState } from 'react';
@@ -19,28 +20,28 @@ interface Props { onClose: () => void; }
 /* ── ALWAYS 3 options — never change this list conditionally ─────────────── */
 const OPTIONS = [
   {
-    type:       'joyid'      as WalletType,
-    emoji:      '🔐',
-    name:       'JoyID',
-    tag:        'Recommended',
-    tagColor:   '#4ade80',
-    desc:       'Biometric wallet — no seed phrase, no extension.',
+    type:     'joyid'      as WalletType,
+    emoji:    '🔐',
+    name:     'JoyID',
+    tag:      'Recommended',
+    tagColor: '#4ade80',
+    desc:     'Biometric wallet — no seed phrase, no extension.',
   },
   {
-    type:       'unipass'    as WalletType,
-    emoji:      '✉️',
-    name:       'UniPass',
-    tag:        'Email',
-    tagColor:   '#22d3ee',
-    desc:       'Enter your ckt1… testnet address (demo mode).',
+    type:     'unipass'    as WalletType,
+    emoji:    '✉️',
+    name:     'UniPass',
+    tag:      'Email',
+    tagColor: '#22d3ee',
+    desc:     'Enter your ckt1… testnet address (demo mode).',
   },
   {
-    type:       'privatekey' as WalletType,
-    emoji:      '🔑',
-    name:       'Private Key',
-    tag:        'Dev Only',
-    tagColor:   '#fbbf24',
-    desc:       'Server-side signing via PRIVATE_KEY in .env.local.',
+    type:     'privatekey' as WalletType,
+    emoji:    '🔑',
+    name:     'Private Key',
+    tag:      'Dev Only',
+    tagColor: '#fbbf24',
+    desc:     'Server-side signing via PRIVATE_KEY in .env.local.',
   },
 ] as const;
 
@@ -52,7 +53,7 @@ export default function WalletModal({ onClose }: Props) {
   const [errors,  setErrors]  = useState<Partial<Record<WalletType, string>>>({});
 
   const handleConnect = async (type: WalletType) => {
-    if (loading) return;  // already connecting — ignore
+    if (loading) return; // already connecting — ignore
 
     console.log('[WalletModal] User selected wallet:', type);
 
@@ -62,7 +63,7 @@ export default function WalletModal({ onClose }: Props) {
     try {
       await connect(type);
       console.log('[WalletModal] Connect success:', type);
-      onClose();  // ← only close on success
+      onClose(); // ← only close on success
     } catch (e) {
       const raw = e instanceof Error ? e.message : String(e);
       console.error('[WalletModal] Connect failed:', type, raw);
@@ -134,7 +135,7 @@ export default function WalletModal({ onClose }: Props) {
               Connect Wallet
             </h2>
             <p style={{ fontSize: 12, color: '#64748b', marginTop: 5, margin: '5px 0 0' }}>
-              3 options available · Nervos CKB Aggron4 Testnet
+              3 options available · Nervos CKB Pudge Testnet
             </p>
           </div>
           <button
@@ -159,8 +160,8 @@ export default function WalletModal({ onClose }: Props) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {OPTIONS.map(opt => {
             const isLoading = loading === opt.type;
-            const errMsg    = errors[opt.type];
-            const disabled  = !!loading;
+            const errMsg   = errors[opt.type];
+            const disabled = !!loading;
 
             return (
               <div key={opt.type}>
@@ -196,24 +197,28 @@ export default function WalletModal({ onClose }: Props) {
                   onMouseEnter={e => {
                     if (disabled) return;
                     const el = e.currentTarget as HTMLButtonElement;
-                    el.style.background = `${opt.tagColor}12`;
+                    el.style.background  = `${opt.tagColor}12`;
                     el.style.borderColor = `${opt.tagColor}40`;
-                    el.style.transform = 'translateY(-1px)';
+                    el.style.transform   = 'translateY(-1px)';
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget as HTMLButtonElement;
-                    el.style.background = errMsg ? 'rgba(248,113,113,0.05)' : isLoading ? `${opt.tagColor}0D` : 'rgba(255,255,255,0.03)';
+                    el.style.background  = errMsg ? 'rgba(248,113,113,0.05)' : isLoading ? `${opt.tagColor}0D` : 'rgba(255,255,255,0.03)';
                     el.style.borderColor = errMsg ? 'rgba(248,113,113,0.28)' : isLoading ? `${opt.tagColor}35` : 'rgba(255,255,255,0.07)';
-                    el.style.transform = 'translateY(0)';
+                    el.style.transform   = 'translateY(0)';
                   }}
                 >
                   {/* Icon */}
-                  <span style={{ fontSize: 26, flexShrink: 0, lineHeight: 1 }}>{opt.emoji}</span>
+                  <span style={{ fontSize: 26, flexShrink: 0, lineHeight: 1 }}>
+                    {opt.emoji}
+                  </span>
 
                   {/* Label + desc */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' }}>
-                      <span style={{ fontWeight: 700, fontSize: 14, color: '#e2e8f0' }}>{opt.name}</span>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: '#e2e8f0' }}>
+                        {opt.name}
+                      </span>
                       <span style={{
                         fontSize: 10, fontWeight: 700, letterSpacing: 0.06,
                         textTransform: 'uppercase',
@@ -270,7 +275,7 @@ export default function WalletModal({ onClose }: Props) {
 
         {/* Footer */}
         <p style={{ marginTop: 20, fontSize: 11, color: '#334155', textAlign: 'center', margin: '20px 0 0' }}>
-          By connecting you agree to interact with the CKB Aggron4 testnet
+          By connecting you agree to interact with the CKB Pudge Testnet
         </p>
       </div>
     </div>

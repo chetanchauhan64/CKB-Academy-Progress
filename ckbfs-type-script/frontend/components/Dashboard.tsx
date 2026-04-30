@@ -2,22 +2,29 @@
 import { useEffect, useState, useCallback } from 'react';
 import StatsBar from './StatsBar';
 import FileCard from './FileCard';
+import { enrichFileEntries } from '@/services/metadataStore';
 import type { useCkbfs } from '@/hooks/useCkbfs';
 type CkbfsHook = ReturnType<typeof useCkbfs>;
 
 interface FileEntry {
-  fileId: string;
-  chunks: number;
-  totalSize: number;
-  totalCapacity: string;
-  outPoints: Array<{ txHash: string; index: string }>;
+  fileId        : string;
+  chunks        : number;
+  totalSize     : number;
+  totalCapacity : string;
+  outPoints     : Array<{ txHash: string; index: string }>;
+  // Week 20 enriched fields
+  fileName      ?: string;
+  mimeType      ?: string;
+  scriptVersion ?: string;
+  txHash        ?: string;
+  uploadedAt    ?: number;
 }
 
 interface Props {
-  ckbfs: CkbfsHook;
-  address: string;
-  onUpdate: (fileId: string) => void;
-  onView:   (fileId: string) => void;
+  ckbfs     : CkbfsHook;
+  address   : string;
+  onUpdate  : (fileId: string) => void;
+  onView    : (fileId: string) => void;
 }
 
 export default function Dashboard({ ckbfs, address, onUpdate, onView }: Props) {
@@ -32,7 +39,9 @@ export default function Dashboard({ ckbfs, address, onUpdate, onView }: Props) {
       const res  = await fetch(`/api/cells?address=${encodeURIComponent(address)}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? 'Failed to load files');
-      setFiles((json.files ?? []) as FileEntry[]);
+      // Week 20: enrich indexer results with local metadata store
+      const enriched = enrichFileEntries((json.files ?? []) as FileEntry[]);
+      setFiles(enriched as FileEntry[]);
     } catch (e) { setError(e instanceof Error ? e.message : 'Unknown error'); }
     finally { setLoading(false); }
   }, [address]);
@@ -41,7 +50,8 @@ export default function Dashboard({ ckbfs, address, onUpdate, onView }: Props) {
 
   const handleConsume = async (fileId: string) => {
     await consumeFile(fileId);
-    setTimeout(refresh, 2000);
+    // Week 20: 5s delayed refresh (indexer eventual consistency window)
+    setTimeout(refresh, 5000);
   };
 
   return (
