@@ -35,7 +35,7 @@
       <p><b>1. Multi-file Dashboard Overview</b></p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_2" width="300"/>
+      <img width="1468" height="633" alt="Screenshot 2026-04-30 at 11 42 51 PM" src="https://github.com/user-attachments/assets/c6233395-48a1-4e9c-aeef-d0a555c329dc" />
       <p><b>2. File Cards with Metadata</b></p>
     </td>
   </tr>
@@ -52,15 +52,15 @@
 <table>
   <tr>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_3" width="300"/>
+      <img width="1470" height="923" alt="Screenshot 2026-04-30 at 11 33 58 PM" src="https://github.com/user-attachments/assets/3bdbc3be-f2be-4b4c-99cc-4a6d3c683226" />
       <p><b>3. Upload Initiated</b></p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_4" width="300"/>
+      <img width="1470" height="923" alt="Screenshot 2026-04-30 at 8 42 13 PM" src="https://github.com/user-attachments/assets/aeec29ab-aee0-4c36-85bf-07306ddcc46e" />
       <p><b>4. Transaction Submitted</b></p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_5" width="300"/>
+      <img width="651" height="850" alt="Screenshot 2026-04-30 at 11 49 27 PM" src="https://github.com/user-attachments/assets/17d8f7d2-e626-48bc-9d9c-a364ec470cdd" />
       <p><b>5. Transaction Confirmed</b></p>
     </td>
   </tr>
@@ -78,11 +78,11 @@
 <table>
   <tr>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_6" width="300"/>
+      <img width="1470" height="923" alt="Screenshot 2026-04-30 at 9 27 02 PM" src="https://github.com/user-attachments/assets/90b45238-4a7d-45b1-865a-7e6f8401f9fc" />
       <p><b>6. JoyID Signing Popup</b></p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_7" width="300"/>
+      <img width="1470" height="923" alt="Screenshot 2026-04-30 at 9 27 21 PM" src="https://github.com/user-attachments/assets/6af7d08c-50f8-40c1-981a-8112a0526a04" />
       <p><b>7. Transaction Inputs & Outputs</b></p>
     </td>
   </tr>
@@ -97,8 +97,7 @@
 - New transaction replaces old state  
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/PASTE_LINK_8" width="500"/>
-</p>
+  <img width="1470" height="923" alt="Screenshot 2026-04-30 at 8 49 14 PM" src="https://github.com/user-attachments/assets/0829d93f-b529-4648-b256-0c7911a32994" />
 
 <p align="center"><b>8. File Update Confirmation</b></p>
 
@@ -112,11 +111,11 @@
 <table>
   <tr>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_9" width="300"/>
+      <img width="1470" height="923" alt="Screenshot 2026-04-30 at 8 51 44 PM" src="https://github.com/user-attachments/assets/921b3bc5-e60f-49d5-9f19-35a16290960b" />
       <p><b>9. Consume Confirmation Popup</b></p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/PASTE_LINK_10" width="300"/>
+      <img width="1470" height="923" alt="Screenshot 2026-04-30 at 8 49 23 PM" src="https://github.com/user-attachments/assets/e727f5a6-6417-4210-a649-bd2433e18ac7" />
       <p><b>10. Consume Success</b></p>
     </td>
   </tr>
@@ -130,8 +129,7 @@
 - Preview + metadata displayed  
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/PASTE_LINK_11" width="500"/>
-</p>
+  <img width="1470" height="923" alt="Screenshot 2026-04-30 at 8 52 11 PM" src="https://github.com/user-attachments/assets/cb9060b3-7bdf-4e63-94af-65637a6385af" />
 
 <p align="center"><b>11. File Viewer (Reconstructed File)</b></p>
 
