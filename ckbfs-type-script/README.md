@@ -7,6 +7,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org)
 [![JoyID](https://img.shields.io/badge/wallet-JoyID-purple)](https://joy.id)
+[![Vercel](https://img.shields.io/badge/deployed-Vercel-black)](https://ckbfs-app.vercel.app)
 
 ---
 
@@ -295,6 +296,14 @@ ckbfs-type-script/
     └── utils/
         └── encoding.ts          # Cell data binary encoding/decoding
 ```
+
+---
+
+## 🌐 Live Demo
+
+**Production URL:** [https://ckbfs-app.vercel.app](https://ckbfs-app.vercel.app)
+
+> Deployed on Vercel · Connected to Nervos CKB Pudge Testnet · Supports JoyID + Private Key wallets
 
 ---
 
